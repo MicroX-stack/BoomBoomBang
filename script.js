@@ -120,32 +120,10 @@ window.addEventListener('load', () => {
     }
 })
 
-// ปลดล็อกเสียงทั้งหมดสำหรับ Safari (แก้ปัญหาเสียงไม่ดัง)
-let audioUnlocked = false
-function unlockAudio() {
-    if (audioUnlocked) return
-    const allAudio = [bgmMenu, bgmGame, bgmFinal, sfxBoom, sfxButton, sfxInterface, sfxVineBoom, sfxAnswer, sfxError, sfxPop, sfxCorrect]
-    allAudio.forEach(audio => {
-        if (audio) {
-            audio.muted = true // ปิดเสียงด้วย muted (สำหรับ iOS ที่ไม่สนใจ volume)
-            const p = audio.play()
-            if (p !== undefined) {
-                p.then(() => {
-                    if (audio !== currentBGM) {
-                        audio.pause()
-                        audio.currentTime = 0
-                    }
-                    audio.muted = false // เปิดเสียงกลับมา
-                }).catch(() => {})
-            }
-        }
-    })
-    audioUnlocked = true
-}
+
 
 // เล่นเพลงเมื่อมีการคลิกครั้งแรก
 document.addEventListener('click', () => {
-    unlockAudio()
     if (!currentBGM && ['start-screen', 'category-screen', 'settings-screen'].includes(currentScreen)) {
         playBGM('menu')
     }
