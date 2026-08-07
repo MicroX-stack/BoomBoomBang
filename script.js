@@ -17,17 +17,17 @@ const toggleHandTracking = document.getElementById('toggle-hand-tracking')
 // ==========================================
 const bgmMenu = new Audio('music/menu.mp3')
 bgmMenu.loop = true
-bgmMenu.volume = 0.5 // เสียงปกติ
+bgmMenu.volume = 1.0 // เสียงปกติ
 bgmMenu.preload = "auto"
 
 const bgmGame = new Audio('music/game.mp3')
 bgmGame.loop = true
-bgmGame.volume = 0.2 // เบาๆ เพลินๆ ตามที่ขอ
+bgmGame.volume = 1.0 // เบาๆ เพลินๆ ตามที่ขอ
 bgmGame.preload = "auto"
 
 const bgmFinal = new Audio('music/final.mp3')
 bgmFinal.loop = true
-bgmFinal.volume = 0.6 // เพลงฉลอง
+bgmFinal.volume = 1.0 // เพลงฉลอง
 bgmFinal.preload = "auto"
 
 // ==========================================
@@ -120,8 +120,34 @@ window.addEventListener('load', () => {
     }
 })
 
+// ปลดล็อกเสียงทั้งหมดสำหรับ Safari (แก้ปัญหาเสียงไม่ดัง)
+let audioUnlocked = false
+function unlockAudio() {
+    if (audioUnlocked) return
+    const allAudio = [bgmMenu, bgmGame, bgmFinal, sfxBoom, sfxButton, sfxInterface, sfxVineBoom, sfxAnswer, sfxError, sfxPop, sfxCorrect]
+    allAudio.forEach(audio => {
+        if (audio) {
+            audio.volume = 0 // ปิดเสียงชั่วคราว
+            const p = audio.play()
+            if (p !== undefined) {
+                p.then(() => {
+                    audio.pause()
+                    audio.currentTime = 0
+                    // คืนค่า volume (bgmGame, bgmFinal, bgmMenu เป็น 1.0)
+                    if (audio === bgmMenu || audio === bgmGame || audio === bgmFinal) audio.volume = 1.0
+                    else if (audio === sfxButton) audio.volume = 0.8
+                    else if (audio === sfxInterface) audio.volume = 0.7
+                    else audio.volume = 1.0
+                }).catch(() => {})
+            }
+        }
+    })
+    audioUnlocked = true
+}
+
 // เล่นเพลงเมื่อมีการคลิกครั้งแรก
 document.addEventListener('click', () => {
+    unlockAudio()
     if (!currentBGM && ['start-screen', 'category-screen', 'settings-screen'].includes(currentScreen)) {
         playBGM('menu')
     }
