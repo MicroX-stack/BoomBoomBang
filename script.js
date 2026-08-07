@@ -651,12 +651,33 @@ function playBeep(freq, duration) {
 // ฟังก์ชันตีกลอง (เรียกใช้ Web Audio API 0-latency)
 // ==========================================
 let lastBoomTime = 0
+let currentDrumSource = null
+
 function playDrumSound(pitch = 140) {
     const now = Date.now()
     if (now - lastBoomTime < 100) return // กันเสียงรั่ว
     lastBoomTime = now
     
-    playSFX(sfxBoom)
+    if (audioCtx && audioBuffers['boom']) {
+        // ตัดหางเสียงเก่าทิ้งทันทีเมื่อตีใหม่ (เหมือน currentTime = 0)
+        if (currentDrumSource) {
+            try {
+                currentDrumSource.stop()
+            } catch(e) {}
+        }
+        
+        const source = audioCtx.createBufferSource()
+        source.buffer = audioBuffers['boom']
+        
+        const gainNode = audioCtx.createGain()
+        gainNode.gain.value = sfxVolumes['boom'] || 1.0
+        
+        source.connect(gainNode)
+        gainNode.connect(audioCtx.destination)
+        source.start(0)
+        
+        currentDrumSource = source
+    }
 }
 
 // ==========================================
