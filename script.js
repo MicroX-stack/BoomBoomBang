@@ -652,6 +652,7 @@ function playBeep(freq, duration) {
 // ==========================================
 let lastBoomTime = 0
 let currentDrumSource = null
+let drumStopTimer = null
 
 function playDrumSound(pitch = 140) {
     const now = Date.now()
@@ -677,6 +678,16 @@ function playDrumSound(pitch = 140) {
         source.start(0)
         
         currentDrumSource = source
+        
+        // ตัดหางเสียง (Echo) ทิ้ง ทันทีที่ผู้เล่นหยุดตี (เหมือนโค้ดเดิมเป๊ะๆ)
+        if (drumStopTimer) clearTimeout(drumStopTimer)
+        drumStopTimer = setTimeout(() => {
+            if (currentDrumSource) {
+                try {
+                    currentDrumSource.stop()
+                } catch(e) {}
+            }
+        }, 250) // ถ้าหยุดตีเกิน 0.25 วินาที ให้ตัดเสียงเลย
     }
 }
 
