@@ -17,17 +17,17 @@ const toggleHandTracking = document.getElementById('toggle-hand-tracking')
 // ==========================================
 const bgmMenu = new Audio('music/menu.mp3')
 bgmMenu.loop = true
-bgmMenu.volume = 1.0 // เสียงปกติ
+bgmMenu.volume = 0.5 // เสียงปกติ
 bgmMenu.preload = "auto"
 
 const bgmGame = new Audio('music/game.mp3')
 bgmGame.loop = true
-bgmGame.volume = 1.0 // เบาๆ เพลินๆ ตามที่ขอ
+bgmGame.volume = 0.2 // เบาๆ เพลินๆ ตามที่ขอ
 bgmGame.preload = "auto"
 
 const bgmFinal = new Audio('music/final.mp3')
 bgmFinal.loop = true
-bgmFinal.volume = 1.0 // เพลงฉลอง
+bgmFinal.volume = 0.6 // เพลงฉลอง
 bgmFinal.preload = "auto"
 
 // ==========================================
@@ -133,8 +133,10 @@ function unlockAudio() {
                 p.then(() => {
                     audio.pause()
                     audio.currentTime = 0
-                    // คืนค่า volume (bgmGame, bgmFinal, bgmMenu เป็น 1.0)
-                    if (audio === bgmMenu || audio === bgmGame || audio === bgmFinal) audio.volume = 1.0
+                    // คืนค่า volume ตามที่กำหนด
+                    if (audio === bgmMenu) audio.volume = 0.5
+                    else if (audio === bgmGame) audio.volume = 0.2
+                    else if (audio === bgmFinal) audio.volume = 0.6
                     else if (audio === sfxButton) audio.volume = 0.8
                     else if (audio === sfxInterface) audio.volume = 0.7
                     else audio.volume = 1.0
@@ -642,24 +644,52 @@ function playBeep(freq, duration) {
     }
 }
 
-// ฟังก์ชันตีกลองด้วยไฟล์เสียง boom.mp3
+
+
+// ==========================================
+// ระบบเสียงตีกลองแบบไร้ดีเลย์ (Web Audio API)
+// ==========================================
+let audioCtx = null
+let drumBuffer = null
+
+function initAudioContext() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+        fetch('Effect/boom.mp3')
+            .then(response => response.arrayBuffer())
+            .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
+            .then(audioBuffer => {
+                drumBuffer = audioBuffer
+            })
+            .catch(e => console.error("Error loading drum sound:", e))
+    }
+}
+
+window.addEventListener('load', initAudioContext)
+document.addEventListener('click', () => {
+    if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume()
+    }
+}, { once: true })
+
 let lastBoomTime = 0
-let drumStopTimer = null
 function playDrumSound(pitch = 140) {
     const now = Date.now()
-    if (now - lastBoomTime < 100) return // กันเสียงรั่ว (จำกัดให้เล่นได้มากสุด 10 ครั้งต่อวินาที)
+    if (now - lastBoomTime < 100) return // กันเสียงรั่ว
     lastBoomTime = now
     
-    // รีสตาร์ทเสียงเดิมแทนการโคลน เพื่อไม่ให้เสียงซ้อนกันจนดังหนวกหู
-    sfxBoom.currentTime = 0
-    const p = sfxBoom.play()
-    if (p !== undefined) p.catch(() => {})
-
-    // ตัดหางเสียง (Echo) ทิ้ง ทันทีที่ผู้เล่นหยุดตี
-    if (drumStopTimer) clearTimeout(drumStopTimer)
-    drumStopTimer = setTimeout(() => {
-        sfxBoom.pause()
-    }, 250) // ถ้าหยุดตีเกิน 0.25 วินาที ให้ตัดเสียงเลย
+    if (audioCtx && drumBuffer) {
+        // เล่นเสียงกลองแบบ 0 ms latency
+        const source = audioCtx.createBufferSource()
+        source.buffer = drumBuffer
+        source.connect(audioCtx.destination)
+        source.start(0)
+    } else {
+        // สำรองกรณีโหลดไม่ทัน
+        sfxBoom.currentTime = 0
+        const p = sfxBoom.play()
+        if (p !== undefined) p.catch(() => {})
+    }
 }
 
 // ==========================================
