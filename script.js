@@ -127,7 +127,7 @@ function unlockAudio() {
     const allAudio = [bgmMenu, bgmGame, bgmFinal, sfxBoom, sfxButton, sfxInterface, sfxVineBoom, sfxAnswer, sfxError, sfxPop, sfxCorrect]
     allAudio.forEach(audio => {
         if (audio) {
-            audio.volume = 0 // ปิดเสียงชั่วคราว
+            audio.muted = true // ปิดเสียงด้วย muted (สำหรับ iOS ที่ไม่สนใจ volume)
             const p = audio.play()
             if (p !== undefined) {
                 p.then(() => {
@@ -135,13 +135,7 @@ function unlockAudio() {
                         audio.pause()
                         audio.currentTime = 0
                     }
-                    // คืนค่า volume ตามที่กำหนด
-                    if (audio === bgmMenu) audio.volume = 0.5
-                    else if (audio === bgmGame) audio.volume = 0.2
-                    else if (audio === bgmFinal) audio.volume = 0.6
-                    else if (audio === sfxButton) audio.volume = 0.8
-                    else if (audio === sfxInterface) audio.volume = 0.7
-                    else audio.volume = 1.0
+                    audio.muted = false // เปิดเสียงกลับมา
                 }).catch(() => {})
             }
         }
