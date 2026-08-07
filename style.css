@@ -3210,3 +3210,24 @@ input:checked+.toggle-slider:before {
 .btn-settings-back:active {
     transform: translateX(-50%) scale(0.95);
 }
+
+/* 
+   ==========================================
+   16:9 & Widescreen Compatibility (Notebooks)
+   ========================================== 
+   Converts vw to vh on screens wider than 16:10 
+   to perfectly mimic the MacBook 16:10 layout 
+   and prevent vertical overlapping!
+*/
+@media (min-aspect-ratio: 161/100) {
+    .home-logo { width: 120vh !important; }
+    .home-cat { width: 83.2vh !important; }
+    .home-buttons-wrapper { width: 64vh !important; }
+    
+    .category-title-img { width: 64vh !important; }
+    .category-buttons-row { width: 128vh !important; }
+    .btn-category-back { width: 16vh !important; }
+    
+    /* On 16:10, margin was 0 -2.5vw. Convert to vh: -2.5 * 1.6 = -4vh */
+    .category-img-btn { margin: 0 -4vh !important; }
+}
