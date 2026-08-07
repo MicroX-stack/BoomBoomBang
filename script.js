@@ -113,18 +113,14 @@ function playBGM(trackType) {
     }
 }
 
-// พยายามเล่นเพลงทันทีที่โหลดเสร็จ
-window.addEventListener('load', () => {
-    if (['start-screen', 'category-screen', 'settings-screen'].includes(currentScreen)) {
-        playBGM('menu')
-    }
-})
+
 
 
 
 // เล่นเพลงเมื่อมีการคลิกครั้งแรก
 document.addEventListener('click', () => {
-    if (!currentBGM && ['start-screen', 'category-screen', 'settings-screen'].includes(currentScreen)) {
+    if (['start-screen', 'category-screen', 'settings-screen'].includes(currentScreen)) {
+        currentBGM = null // รีเซ็ตสถานะเผื่อมีบัค
         playBGM('menu')
     }
 }, { once: true })
