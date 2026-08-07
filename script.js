@@ -31,38 +31,69 @@ bgmFinal.volume = 0.6 // เพลงฉลอง
 bgmFinal.preload = "auto"
 
 // ==========================================
-// ระบบเสียง Effect (SFX)
 // ==========================================
-const sfxBoom = new Audio('Effect/boom.mp3')
-sfxBoom.volume = 1.0 // ดังกว่า BGM
+// ระบบเสียง Effect (SFX) แบบ 0-latency (Web Audio API)
+// ==========================================
+let audioCtx = null;
+const audioBuffers = {};
+const sfxVolumes = {
+    'boom': 1.0,
+    'button-click': 1.0, // เพิ่มความดังของปุ่ม
+    'interface-click-': 1.0,
+    'vine-boom': 1.0,
+    'answer': 1.0,
+    'error': 1.0,
+    'pop': 1.0,
+    'correct': 1.0
+};
 
-const sfxButton = new Audio('Effect/button-click.mp3')
-sfxButton.volume = 0.8
+// ใช้เป็น string ID แทน Audio Object เดิม
+const sfxBoom = 'boom';
+const sfxButton = 'button-click';
+const sfxInterface = 'interface-click-';
+const sfxVineBoom = 'vine-boom';
+const sfxAnswer = 'answer';
+const sfxError = 'error';
+const sfxPop = 'pop';
+const sfxCorrect = 'correct';
 
-const sfxInterface = new Audio('Effect/interface-click-.mp3')
-sfxInterface.volume = 0.7
+function initAudioContext() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // โหลดเสียงทั้งหมดล่วงหน้าเข้า RAM เพื่อให้เล่นได้ทันที (ไม่มีดีเลย์)
+    Object.keys(sfxVolumes).forEach(name => {
+        fetch(`Effect/${name}.mp3`)
+            .then(res => res.arrayBuffer())
+            .then(data => audioCtx.decodeAudioData(data))
+            .then(buffer => {
+                audioBuffers[name] = buffer;
+            })
+            .catch(e => console.error("Error loading", name, e));
+    });
+}
 
-const sfxVineBoom = new Audio('Effect/vine-boom.mp3')
-sfxVineBoom.volume = 1.0
+// โหลดตอนเข้าเว็บ และปลดล็อกเมื่อคลิก
+window.addEventListener('load', initAudioContext);
+document.addEventListener('click', () => {
+    if (!audioCtx) initAudioContext();
+    if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}, { once: true });
 
-const sfxAnswer = new Audio('Effect/answer.mp3')
-sfxAnswer.volume = 1.0
-
-const sfxError = new Audio('Effect/error.mp3?v=2')
-sfxError.volume = 1.0
-
-const sfxPop = new Audio('Effect/pop.mp3')
-sfxPop.volume = 1.0
-
-const sfxCorrect = new Audio('Effect/correct.mp3')
-sfxCorrect.volume = 1.0
-
-function playSFX(audioObj) {
-    if (!audioObj) return
-    const clone = audioObj.cloneNode()
-    clone.volume = audioObj.volume
-    const p = clone.play()
-    if (p !== undefined) p.catch(() => {})
+function playSFX(audioName) {
+    if (audioCtx && audioBuffers[audioName]) {
+        const source = audioCtx.createBufferSource();
+        source.buffer = audioBuffers[audioName];
+        
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.value = sfxVolumes[audioName] || 1.0;
+        
+        source.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        source.start(0);
+    }
 }
 
 // เพิ่มเสียงปุ่มกดทั่วไปทั้งระบบ
@@ -617,49 +648,15 @@ function playBeep(freq, duration) {
 
 
 // ==========================================
-// ระบบเสียงตีกลองแบบไร้ดีเลย์ (Web Audio API)
+// ฟังก์ชันตีกลอง (เรียกใช้ Web Audio API 0-latency)
 // ==========================================
-let audioCtx = null
-let drumBuffer = null
-
-function initAudioContext() {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-        fetch('Effect/boom.mp3')
-            .then(response => response.arrayBuffer())
-            .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
-            .then(audioBuffer => {
-                drumBuffer = audioBuffer
-            })
-            .catch(e => console.error("Error loading drum sound:", e))
-    }
-}
-
-window.addEventListener('load', initAudioContext)
-document.addEventListener('click', () => {
-    if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume()
-    }
-}, { once: true })
-
 let lastBoomTime = 0
 function playDrumSound(pitch = 140) {
     const now = Date.now()
     if (now - lastBoomTime < 100) return // กันเสียงรั่ว
     lastBoomTime = now
     
-    if (audioCtx && drumBuffer) {
-        // เล่นเสียงกลองแบบ 0 ms latency
-        const source = audioCtx.createBufferSource()
-        source.buffer = drumBuffer
-        source.connect(audioCtx.destination)
-        source.start(0)
-    } else {
-        // สำรองกรณีโหลดไม่ทัน
-        sfxBoom.currentTime = 0
-        const p = sfxBoom.play()
-        if (p !== undefined) p.catch(() => {})
-    }
+    playSFX(sfxBoom)
 }
 
 // ==========================================
@@ -1041,9 +1038,7 @@ function endSmashGame(winningPlayer) {
     winningIce.classList.add('shatter')
 
     // แอฟเฟกต์ระเบิดหน้าจอและเสียงระเบิด (ใช้ Vine Boom)
-    const explodeSFX = sfxVineBoom.cloneNode()
-    explodeSFX.volume = 1.0
-    explodeSFX.play().catch(()=>{})
+    playSFX(sfxVineBoom)
 
     document.getElementById('game-screen').animate([
         { transform: 'translate(0, 0) rotate(0deg)' },
