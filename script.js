@@ -33,28 +33,28 @@ bgmFinal.preload = "auto"
 // ==========================================
 // ระบบเสียง Effect (SFX)
 // ==========================================
-const sfxBoom = new Audio('effect/boom.mp3')
+const sfxBoom = new Audio('Effect/boom.mp3')
 sfxBoom.volume = 1.0 // ดังกว่า BGM
 
-const sfxButton = new Audio('effect/button-click.mp3')
+const sfxButton = new Audio('Effect/button-click.mp3')
 sfxButton.volume = 0.8
 
-const sfxInterface = new Audio('effect/interface-click-.mp3')
+const sfxInterface = new Audio('Effect/interface-click-.mp3')
 sfxInterface.volume = 0.7
 
-const sfxVineBoom = new Audio('effect/vine-boom.mp3')
+const sfxVineBoom = new Audio('Effect/vine-boom.mp3')
 sfxVineBoom.volume = 1.0
 
-const sfxAnswer = new Audio('effect/answer.mp3')
+const sfxAnswer = new Audio('Effect/answer.mp3')
 sfxAnswer.volume = 1.0
 
-const sfxError = new Audio('effect/error.mp3?v=2')
+const sfxError = new Audio('Effect/error.mp3?v=2')
 sfxError.volume = 1.0
 
-const sfxPop = new Audio('effect/pop.mp3')
+const sfxPop = new Audio('Effect/pop.mp3')
 sfxPop.volume = 1.0
 
-const sfxCorrect = new Audio('effect/correct.mp3')
+const sfxCorrect = new Audio('Effect/correct.mp3')
 sfxCorrect.volume = 1.0
 
 function playSFX(audioObj) {
@@ -424,18 +424,18 @@ function getTotalNormalQuestions() {
 const categoryQuestions = {
     animal: {
         level1: [
-            buildLocalImageQuestion('Animals/Level1/Cat.JPG', 'What animal is this in English?', 'Cat', 'Dog', 'Rabbit'),
-            buildLocalImageQuestion('Animals/Level1/Cow.jpg', 'What animal is this in English?', 'Cow', 'Horse', 'Pig'),
-            buildLocalImageQuestion('Animals/Level1/Dog.jpg', 'What animal is this in English?', 'Dog', 'Cat', 'Duck'),
-            buildLocalImageQuestion('Animals/Level1/Duck.jpg', 'What animal is this in English?', 'Duck', 'Chicken', 'Bird'),
-            buildLocalImageQuestion('Animals/Level1/Pig.jpg', 'What animal is this in English?', 'Pig', 'Cow', 'Sheep')
+            buildLocalImageQuestion('animals/Level1/Cat.JPG', 'What animal is this in English?', 'Cat', 'Dog', 'Rabbit'),
+            buildLocalImageQuestion('animals/Level1/Cow.jpg', 'What animal is this in English?', 'Cow', 'Horse', 'Pig'),
+            buildLocalImageQuestion('animals/Level1/Dog.jpg', 'What animal is this in English?', 'Dog', 'Cat', 'Duck'),
+            buildLocalImageQuestion('animals/Level1/Duck.jpg', 'What animal is this in English?', 'Duck', 'Chicken', 'Bird'),
+            buildLocalImageQuestion('animals/Level1/Pig.jpg', 'What animal is this in English?', 'Pig', 'Cow', 'Sheep')
         ],
         level2: [
-            buildLocalImageQuestion('Animals/Level2/Batterfly.png', 'What animal is this in English?', 'Butterfly', 'Bee', 'Bird'),
-            buildLocalImageQuestion('Animals/Level2/Crocodile.png', 'What animal is this in English?', 'Crocodile', 'Snake', 'Lizard'),
-            buildLocalImageQuestion('Animals/Level2/Geraffe.png', 'What animal is this in English?', 'Giraffe', 'Horse', 'Camel'),
-            buildLocalImageQuestion('Animals/Level2/Rat.png', 'What animal is this in English?', 'Rat', 'Mouse', 'Hamster'),
-            buildLocalImageQuestion('Animals/Level2/Zebra.png', 'What animal is this in English?', 'Zebra', 'Horse', 'Panda')
+            buildLocalImageQuestion('animals/Level2/Batterfly.png', 'What animal is this in English?', 'Butterfly', 'Bee', 'Bird'),
+            buildLocalImageQuestion('animals/Level2/Crocodile.png', 'What animal is this in English?', 'Crocodile', 'Snake', 'Lizard'),
+            buildLocalImageQuestion('animals/Level2/Geraffe.png', 'What animal is this in English?', 'Giraffe', 'Horse', 'Camel'),
+            buildLocalImageQuestion('animals/Level2/Rat.png', 'What animal is this in English?', 'Rat', 'Mouse', 'Hamster'),
+            buildLocalImageQuestion('animals/Level2/Zebra.png', 'What animal is this in English?', 'Zebra', 'Horse', 'Panda')
         ],
         level3: [
             buildLocalImageQuestion('', 'It has a long tail, loves to swing on trees, and eats bananas. What is it?', 'A monkey', 'A dog', 'A cat'),
@@ -445,9 +445,9 @@ const categoryQuestions = {
             buildLocalImageQuestion('', 'It has four legs, wags its tail, and says \'woof woof\'. What is it?', 'A dog', 'A frog', 'A horse')
         ],
         bonus: [
-            buildLocalImageQuestion('Animals/Jigsaw/Owl.jpg', 'What animal is this in English?', 'Owl', 'Eagle', 'Penguin', { bonusPoints: BONUS_POINTS }),
-            buildLocalImageQuestion('Animals/Jigsaw/Panda.jpg', 'What animal is this in English?', 'Panda', 'Bear', 'Koala', { bonusPoints: BONUS_POINTS }),
-            buildLocalImageQuestion('Animals/Jigsaw/Lion.jpg', 'What animal is this in English?', 'Lion', 'Tiger', 'Monkey', { bonusPoints: BONUS_POINTS })
+            buildLocalImageQuestion('animals/Jigsaw/Owl.jpg', 'What animal is this in English?', 'Owl', 'Eagle', 'Penguin', { bonusPoints: BONUS_POINTS }),
+            buildLocalImageQuestion('animals/Jigsaw/Panda.jpg', 'What animal is this in English?', 'Panda', 'Bear', 'Koala', { bonusPoints: BONUS_POINTS }),
+            buildLocalImageQuestion('animals/Jigsaw/Lion.jpg', 'What animal is this in English?', 'Lion', 'Tiger', 'Monkey', { bonusPoints: BONUS_POINTS })
         ]
     },
     object: {
