@@ -882,19 +882,16 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
     } else {
         playDrumSound(110) // กลองผู้เล่น 2 (โทนทุ้มต่ำกว่า)
     }
-
     if (playerKey === 'p1') {
-        // They clash! P1 pushes P2 back but not too much so it doesn't drag forever
-        if (p1Smashes + p2Smashes >= MAX_SMASHES) {
-            p1Smashes += 2
-            p2Smashes -= 1
-        } else {
-            p1Smashes++
+        p1Smashes++
+        // They clash! P1 pushes P2 back!
+        if (p1Smashes + p2Smashes > MAX_SMASHES) {
+            p2Smashes--
         }
         
         // Ensure bounds
-        p1Smashes = Math.min(MAX_SMASHES, p1Smashes)
-        p2Smashes = Math.max(0, p2Smashes)
+        p1Smashes = Math.min(MAX_SMASHES, Math.max(0, p1Smashes))
+        p2Smashes = Math.min(MAX_SMASHES, Math.max(0, p2Smashes))
         
         p1Hp = Math.max(0, Math.round((1 - (p1Smashes / MAX_SMASHES)) * 100))
         p2Hp = Math.max(0, Math.round((1 - (p2Smashes / MAX_SMASHES)) * 100)) // P2 might have been pushed back
@@ -947,17 +944,15 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
             endSmashGame('p1')
         }
     } else {
-        // They clash! P2 pushes P1 back but not too much so it doesn't drag forever
-        if (p1Smashes + p2Smashes >= MAX_SMASHES) {
-            p2Smashes += 2
-            p1Smashes -= 1
-        } else {
-            p2Smashes++
+        p2Smashes++
+        // They clash! P2 pushes P1 back!
+        if (p1Smashes + p2Smashes > MAX_SMASHES) {
+            p1Smashes--
         }
         
         // Ensure bounds
-        p2Smashes = Math.min(MAX_SMASHES, p2Smashes)
-        p1Smashes = Math.max(0, p1Smashes)
+        p2Smashes = Math.min(MAX_SMASHES, Math.max(0, p2Smashes))
+        p1Smashes = Math.min(MAX_SMASHES, Math.max(0, p1Smashes))
         
         p2Hp = Math.max(0, Math.round((1 - (p2Smashes / MAX_SMASHES)) * 100))
         p1Hp = Math.max(0, Math.round((1 - (p1Smashes / MAX_SMASHES)) * 100)) // P1 might have been pushed back
