@@ -194,7 +194,7 @@ let optionProgress = { A: 0, B: 0, C: 0, D: 0 }
 // ตัวควบคุมความเร็วมือ และ Debounce สำหรับจับการ "ทุบลง"
 const SMASH_THRESHOLD = 0.15 // ความเร็วการทุบแนวตั้งแกน Y (ความสูงจอต่อวินาที) (ปรับให้อ่อนลงเพื่อให้ทุบติดง่ายสำหรับคนยืนไกลๆ)
 const SMASH_COOLDOWN = 120 // ลด Cooldown เพื่อให้ทุบได้รัวขึ้นสะใจ (120ms)
-const MAX_SMASHES = 50 // จำนวนการทุบทั้งหมดตามภาพวิธีเล่นกึ่งกลางจอ (50 ครั้ง)
+const MAX_SMASHES = 20 // จำนวนการทุบทั้งหมดตามภาพวิธีเล่นกึ่งกลางจอ (ลดจาก 50 เป็น 20 เพื่อให้จบไวขึ้น)
 
 // ประวัติจำมือสำหรับ Player 1 และ Player 2
 // เปลี่ยนเป็นเก็บสถานะแยกเป็น "รายมือ" (hands array) แทนตัวแปรเดี่ยว
@@ -2490,3 +2490,25 @@ if (btnBackFromSettings) {
 
 // ค่าเริ่มต้น: แสดงหน้าเริ่มเกม
 setScreen('start-screen')
+
+// ==========================================
+// Preload Final Screen Assets
+// ==========================================
+function preloadFinalAssets() {
+    const assetsToPreload = [
+        'end/win1.png',
+        'end/win2.png',
+        'end/cry1.png',
+        'end/cry2.png',
+        'end/cry3.png',
+        'end/winner-jukebox-bg-removed.png',
+        'end/Lose.png'
+    ];
+    
+    assetsToPreload.forEach(src => {
+        const img = new Image();
+        img.src = src;
+    });
+}
+// Trigger preload immediately when game loads
+preloadFinalAssets();
