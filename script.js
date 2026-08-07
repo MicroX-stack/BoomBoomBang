@@ -131,8 +131,10 @@ function unlockAudio() {
             const p = audio.play()
             if (p !== undefined) {
                 p.then(() => {
-                    audio.pause()
-                    audio.currentTime = 0
+                    if (audio !== currentBGM) {
+                        audio.pause()
+                        audio.currentTime = 0
+                    }
                     // คืนค่า volume ตามที่กำหนด
                     if (audio === bgmMenu) audio.volume = 0.5
                     else if (audio === bgmGame) audio.volume = 0.2
