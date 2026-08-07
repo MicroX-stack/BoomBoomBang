@@ -879,8 +879,20 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
     // เล่นเสียงกลองสังเคราะห์ตามผู้เล่น
     if (playerKey === 'p1') {
         playDrumSound(140) // กลองผู้เล่น 1 (โทนสูงขึ้นเล็กน้อย)
+        const bongoP1 = document.querySelector('#p1-ice-block .bongo-drums-img');
+        if (bongoP1) {
+            bongoP1.classList.remove('bongo-hit-anim');
+            void bongoP1.offsetWidth; // Trigger reflow
+            bongoP1.classList.add('bongo-hit-anim');
+        }
     } else {
         playDrumSound(110) // กลองผู้เล่น 2 (โทนทุ้มต่ำกว่า)
+        const bongoP2 = document.querySelector('#p2-ice-block .bongo-drums-img');
+        if (bongoP2) {
+            bongoP2.classList.remove('bongo-hit-anim');
+            void bongoP2.offsetWidth; // Trigger reflow
+            bongoP2.classList.add('bongo-hit-anim');
+        }
     }
     if (playerKey === 'p1') {
         p1Smashes++
@@ -1120,14 +1132,12 @@ function getNextQuestionForRound() {
     revealedSquares = []
 
     if (isBonusLevel) {
-        // สุ่มเลือกว่าจะได้ข้อไหนตอบก่อนใน Jigsaw (สุ่มจากคลังโบนัสโดยตรง)
-        let availablePool = bonusQuestionPool;
-        if (availablePool.length > 1 && window.lastBonusQuestionId) {
-            // ไม่ให้สุ่มได้ข้อที่เพิ่งตอบไปรอบที่แล้ว (ป้องกันข้อซ้ำติดกัน)
-            availablePool = availablePool.filter(q => q.questionId !== window.lastBonusQuestionId);
+        // ดึงข้อโบนัสจาก Pool ที่สุ่มไว้แล้ว โดยไม่ให้ซ้ำข้อเดิม
+        if (bonusQuestionPool.length === 0) {
+            // หากหมดให้สุ่มชุดโบนัสใหม่
+            buildQuestionPools(selectedCategory, true);
         }
-        const randomIndex = Math.floor(Math.random() * availablePool.length);
-        currentQuestion = availablePool[randomIndex];
+        currentQuestion = bonusQuestionPool.shift();
         window.lastBonusQuestionId = currentQuestion.questionId;
         
         currentLevel = 0
