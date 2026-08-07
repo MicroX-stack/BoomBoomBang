@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bb 🥁</title>
+    <!-- ใช้ฟอนต์ Fredoka และ Itim เพื่อความน่ารัก เหมาะสำหรับเด็กประถม -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400..700&family=Itim&family=Orbitron:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="icon" href="data:,">
+
+    <!-- MediaPipe Libraries สำหรับระบบตรวจจับและวาดโครงมือ -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <!-- ================= กล้องเว็บแคมเต็มจอเป็นพื้นหลัง (AR Background) ================= -->
+    <div id="camera-bg-container" class="camera-bg">
+        <video id="webcam" autoplay playsinline muted></video>
+        <canvas id="hand-canvas"></canvas>
+    </div>
+
+    <!-- ================= ตัวแอปและหน้าจอต่างๆ ลอยทับด้านบน ================= -->
+    <div id="app">
+        <!-- ================= หน้าที่ 1: หน้าเริ่มเกม (START SCREEN) ================= -->
+        <div id="start-screen" class="screen active">
+            <div class="home-bg">
+                <div class="home-content" style="background-image: url('home/background.png');">
+                    <img src="home/logo (1).png" class="home-logo" alt="Boom Boom Bang">
+                    <img src="home/cat (1).png" class="home-cat" alt="Cat Drummer">
+                        <div class="home-buttons-wrapper">
+                            <div class="home-btn-img-wrapper">
+                                <img src="home/start.png" class="home-btn-img" alt="เริ่มเกม">
+                                <button id="btn-start" class="invisible-overlay-btn" aria-label="เริ่มเกม"></button>
+                            </div>
+                            <div class="home-btn-img-wrapper">
+                                <img src="home/Option.png" class="home-btn-img" alt="ตั้งค่า">
+                                <button id="btn-start-settings" class="invisible-overlay-btn" aria-label="ตั้งค่า"></button>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= หน้าที่ 2: หน้าเลือกหมวดหมู่ (CATEGORY SCREEN) ================= -->
+        <div id="category-screen" class="screen hidden">
+            <div class="category-bg-container">
+                <img src="Category /watermark-removed  (1).png" class="category-bg-img" alt="Background">
+                
+                <!-- Choose A Category Sign -->
+                <img src="Category /ca.png" class="category-title-img" alt="Choose A Category">
+                
+                <!-- Back Button -->
+                <button id="btn-back-to-home" class="btn-category-back">
+                    <img src="setup/back (1).png" alt="Back to Home">
+                </button>
+
+                <!-- Category Buttons Row -->
+                <div class="category-buttons-row">
+                    <button class="category-img-btn category-btn" data-category="occupation">
+                        <img src="Category /occupations (1) (1).png" alt="Occupations">
+                    </button>
+                    <button class="category-img-btn category-btn" data-category="animal">
+                        <img src="Category /animals (1) (1).png" alt="Animals">
+                    </button>
+                    <button class="category-img-btn category-btn" data-category="fruit">
+                        <img src="Category /fruit (1) (1).png" alt="Fruits">
+                    </button>
+                    <button class="category-img-btn category-btn" data-category="object">
+                        <img src="Category /object (1) (1).png" alt="Objects">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= หน้าที่ 3: หน้านับถอยหลัง (COUNTDOWN SCREEN) ================= -->
+        <div id="countdown-screen" class="screen hidden">
+            <div id="countdown-number" class="countdown-text">3</div>
+        </div>
+
+        <!-- ================= Game Screen ================= -->
+        <div id="game-screen" class="screen hidden">
+            <!-- Vertical Divider -->
+            <div class="game-vertical-divider">
+                <div class="divider-vs-badge">VS</div>
+            </div>
+            <!-- Top Bar: Player Labels and Rainbow HP Bar -->
+            <div class="game-top-bar">
+                <div class="player-pill" style="background: none; border: none; padding: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;">
+                    <img src="end/player1.png" style="height: 12vh; max-height: 120px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); margin-bottom: 5px;">
+                </div>
+
+                <!-- Rainbow HP Bar with White Background & Red Claw Marks (Vibe) -->
+                <div class="rainbow-hp-container" style="background: rgba(255,255,255,0.9); border-radius: 30px; box-shadow: 0 0 20px rgba(255,0,0,0.3); border: 4px solid #fff;">
+                    <div class="rainbow-hp-bar" style="background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,0,0,0.1) 10px, rgba(255,0,0,0.1) 20px);">
+                        <div id="p1-hp-portion" class="hp-portion p1-portion" style="width: 50%;"></div>
+                        <div id="p2-hp-portion" class="hp-portion p2-portion" style="width: 50%;"></div>
+                    </div>
+                    <!-- P1 & P2 Cats on the bar -->
+                    <img id="p1-progress-cat" src="blood/cat1.png" class="progress-cat p1-cat-icon" alt="P1 Cat" style="width: 80px; height: 80px; top: -20px;">
+                    <img id="p2-progress-cat" src="blood/cat1.png" class="progress-cat p2-cat-icon" alt="P2 Cat" style="width: 80px; height: 80px; top: -20px;">
+                </div>
+
+                <div class="player-pill" style="background: none; border: none; padding: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;">
+                    <img src="end/player2.png" style="height: 12vh; max-height: 120px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); margin-bottom: 5px;">
+                </div>
+            </div>
+
+
+            <!-- Bottom: Drums (no background) -->
+            <div class="game-bottom-area">
+                <!-- Player 1 (Left) -->
+                <div class="player-bottom-box p1-box">
+                    <div class="ice-wrapper no-bg">
+                        <div id="p1-ice-block" class="bongo-drums-wrapper ice-block">
+                            <img src="bongo_drums.png?v=2" class="bongo-drums-img" alt="Bongo Drums P1">
+                        </div>
+                        <div class="ice-cracks-overlay" id="p1-cracks" style="display: none;">
+                            <svg viewBox="0 0 100 100"></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 2 (Right) -->
+                <div class="player-bottom-box p2-box">
+                    <div class="ice-wrapper no-bg">
+                        <div id="p2-ice-block" class="bongo-drums-wrapper ice-block">
+                            <img src="bongo_drums.png?v=2" class="bongo-drums-img" alt="Bongo Drums P2">
+                        </div>
+                        <div class="ice-cracks-overlay" id="p2-cracks" style="display: none;">
+                            <svg viewBox="0 0 100 100"></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= หน้าที่ 4: หน้าตอบคำถาม (QUESTION SCREEN) ================= -->
+        <div id="question-screen" class="screen hidden">
+
+            <!-- คอนเทนเนอร์สำหรับผู้เล่น 1 (ซีกซ้าย) -->
+            <div class="game-half p1-q-half" id="p1-question-container">
+                <!-- ไดนามิกสร้างใน JS -->
+            </div>
+
+            <div id="question-divider"></div>
+
+            <!-- คอนเทนเนอร์สำหรับผู้เล่น 2 (ซีกขวา) -->
+            <div class="game-half p2-q-half" id="p2-question-container">
+                <!-- ไดนามิกสร้างใน JS -->
+            </div>
+        </div>
+
+        <!-- ================= หน้าที่ 5: หน้าสรุปคะแนน (SCORE SCREEN) ================= -->
+        <div id="score-screen" class="screen hidden">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100vw; height: 100vh; background: #000;">
+                
+                <div style="position: relative; width: 100vw; height: 100vh; container-type: inline-size;">
+                    <!-- Background Room -->
+                    <img src="score/sc.png" alt="Score Background" style="width: 100%; height: 100%; display: block; object-fit: fill;">
+                    
+                    <!-- Header / Title -->
+                    <img src="score/final (1).png" alt="Score Header" style="position: absolute; top: 6%; left: 50%; transform: translateX(-50%); width: 45%; z-index: 2; filter: drop-shadow(0 1vw 1vw rgba(0,0,0,0.5));">
+                    
+                    <!-- Player 1 Score -->
+                    <div id="p1-overall-score-display" style="position: absolute; top: 55.5%; left: 37.5%; transform: translate(-50%, -50%); font-family: 'Orbitron', sans-serif; font-size: 8cqw; color: #a6f5ff; text-shadow: 0 0 2cqw #00e5ff, 2px 2px 0 #000; font-weight: bold; width: 21%; text-align: center; white-space: nowrap; letter-spacing: 0.1cqw;">0</div>
+                    
+                    <!-- Player 2 Score -->
+                    <div id="p2-overall-score-display" style="position: absolute; top: 55.5%; left: 79.5%; transform: translate(-50%, -50%); font-family: 'Orbitron', sans-serif; font-size: 8cqw; color: #ffb3e6; text-shadow: 0 0 2cqw #ff00a0, 2px 2px 0 #000; font-weight: bold; width: 21%; text-align: center; white-space: nowrap; letter-spacing: 0.1cqw;">0</div>
+                    
+                    <!-- Optional Result Text (Hidden by user request) -->
+                    <div id="round-result-detail" style="display: none;">
+                        <!-- JS fills this -->
+                    </div>
+                    
+                    <!-- Continue Button -->
+                    <img src="score/continue.png" id="btn-score-next" alt="Continue" style="position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); width: 28%; cursor: pointer; transition: transform 0.2s; filter: drop-shadow(0 0.5vw 1vw rgba(0,0,0,0.5));" onmouseover="this.style.transform='translateX(-50%) scale(1.05)'" onmouseout="this.style.transform='translateX(-50%) scale(1)'">
+                    
+                    <div style="position: absolute; bottom: 2%; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); font-family: 'Itim', cursive; font-size: 1.5cqw; white-space: nowrap;">
+                        หรือรอ <span id="score-timer-count">3</span> วินาทีเพื่อไปต่อ
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <div id="final-screen" class="screen hidden" style="background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; position: relative; z-index: 50;">
+            <style>
+                @keyframes anim-win-1 { 0%, 49.9% { opacity: 1; } 50%, 100% { opacity: 0; } }
+                @keyframes anim-win-2 { 0%, 49.9% { opacity: 0; } 50%, 100% { opacity: 1; } }
+                @keyframes anim-cry-1 { 0%, 33.3% { opacity: 1; } 33.4%, 100% { opacity: 0; } }
+                @keyframes anim-cry-2 { 0%, 33.3% { opacity: 0; } 33.4%, 66.6% { opacity: 1; } 66.7%, 100% { opacity: 0; } }
+                @keyframes anim-cry-3 { 0%, 66.6% { opacity: 0; } 66.7%, 100% { opacity: 1; } }
+                .anim-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
+                .anim-win .frame1 { animation: anim-win-1 0.4s infinite; }
+                .anim-win .frame2 { animation: anim-win-2 0.4s infinite; }
+                .anim-cry .frame1 { animation: anim-cry-1 0.6s infinite; }
+                .anim-cry .frame2 { animation: anim-cry-2 0.6s infinite; }
+                .anim-cry .frame3 { animation: anim-cry-3 0.6s infinite; }
+            </style>
+            
+            <!-- Center Divider (Same as game screen) -->
+            <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 8px; height: 100%; background-color: rgba(255, 255, 255, 0.6); box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); z-index: 1; pointer-events: none;"></div>
+
+            <div style="display: flex; width: 100%; max-width: 1400px; height: 100%;">
+                <!-- P1 Side -->
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transform: translateX(-4vw);">
+                    <img src="end/player1.png" style="width: 25vw; max-width: 350px; margin-bottom: 20px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4)); z-index: 2;">
+                    
+                    <div id="p1-final-anim" style="position: relative; width: 48vw; height: 48vw; max-width: 700px; max-height: 700px; z-index: 2;">
+                        <!-- JS fills this -->
+                    </div>
+                    
+                    <img id="p1-final-badge" src="" style="width: 25vw; max-width: 350px; margin-top: 20px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4)); z-index: 2;">
+                </div>
+                
+                <!-- Buttons Exact Center -->
+                <div id="final-buttons-container" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 30px; align-items: center; z-index: 10; background: rgba(255, 255, 255, 0.6); padding: 30px 40px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
+                    <button class="hover-target" data-hover-key="final-newgame" id="btn-play-same-category" style="background: none; border: none; padding: 0; position: relative; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="end/newgame-jukebox-bg-removed.png" style="width: 18vw; max-width: 250px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); pointer-events: none;">
+                        <div class="progress-fill" style="background: rgba(46, 204, 113, 0.5); position: absolute; bottom: 0; left: 0; height: 100%; width: 0%; border-radius: 20px; pointer-events: none;"></div>
+                    </button>
+                    <button class="hover-target" data-hover-key="final-home" id="btn-back-home" style="background: none; border: none; padding: 0; position: relative; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="end/home-removed.PNG" style="width: 15vw; max-width: 200px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); pointer-events: none;">
+                        <div class="progress-fill" style="background: rgba(46, 204, 113, 0.5); position: absolute; bottom: 0; left: 0; height: 100%; width: 0%; border-radius: 20px; pointer-events: none;"></div>
+                    </button>
+                </div>
+                
+                <!-- P2 Side -->
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transform: translateX(4vw);">
+                    <img src="end/player2.png" style="width: 25vw; max-width: 350px; margin-bottom: 20px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4)); z-index: 2;">
+                    
+                    <div id="p2-final-anim" style="position: relative; width: 48vw; height: 48vw; max-width: 700px; max-height: 700px; z-index: 2;">
+                        <!-- JS fills this -->
+                    </div>
+                    
+                    <img id="p2-final-badge" src="" style="width: 25vw; max-width: 350px; margin-top: 20px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4)); z-index: 2;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Message Box -->
+        <div id="error-message" class="error-card hidden">
+            <span class="error-emoji">⚠️</span>
+            <div class="error-text-container">
+                <p id="error-text" class="error-text">Please allow camera access and wait for the model to load</p>
+            </div>
+        </div>
+
+        <!-- ================= Hand Pointer ================= -->
+        <div id="p1-pointer" class="hand-pointer p1-pointer hidden">🔴 P1</div>
+        <div id="p2-pointer" class="hand-pointer p2-pointer hidden">🔵 P2</div>
+    </div>
+
+    <!-- ================= หน้าที่ 6: หน้าตั้งค่า (SETTINGS SCREEN) ================= -->
+    <div id="settings-screen" class="screen hidden">
+        <div class="settings-bg-container">
+            <img src="setup/gemini-watermark-removed (4).png" class="settings-bg-img" alt="Settings Background">
+            
+            <div class="settings-content-wrapper">
+                <!-- Add back button at bottom center of the white frame -->
+                <button id="btn-back-from-settings" class="btn-settings-back">
+                    <img src="setup/back (1).png" alt="Back to Home">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=5"></script>
+</body>
+
+</html>
