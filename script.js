@@ -777,8 +777,16 @@ function startGameScreen() {
 
 function updateGameScreenUI() {
     // Both progress independently from 0 to 1 (0 to 100%)
-    const p1Factor = Math.min(1, p1Smashes / MAX_SMASHES)
-    const p2Factor = Math.min(1, p2Smashes / MAX_SMASHES)
+    let p1Factor = Math.min(1, p1Smashes / MAX_SMASHES)
+    let p2Factor = Math.min(1, p2Smashes / MAX_SMASHES)
+
+    // ป้องกันไม่ให้หลอดเลือดและแมววิ่งทับกัน (Overlap)
+    // ถ้าผลรวมเกิน 1 (เกิน 100% ของหลอด) ให้หักส่วนเกินออกคนละครึ่ง เพื่อให้ดูเหมือนดันกันอยู่ตรงกลาง!
+    if (p1Factor + p2Factor > 1) {
+        const excess = (p1Factor + p2Factor) - 1
+        p1Factor -= excess / 2
+        p2Factor -= excess / 2
+    }
 
     const p1HpPortion = p1Factor * 100
     const p2HpPortion = p2Factor * 100
