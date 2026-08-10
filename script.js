@@ -898,7 +898,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         p1Smashes++
         // They clash! P1 pushes P2 back!
         if (p1Smashes + p2Smashes > MAX_SMASHES) {
-            p2Smashes--
+            p2Smashes -= 0.3
         }
         
         // Ensure bounds
@@ -959,7 +959,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         p2Smashes++
         // They clash! P2 pushes P1 back!
         if (p1Smashes + p2Smashes > MAX_SMASHES) {
-            p1Smashes--
+            p1Smashes -= 0.3
         }
         
         // Ensure bounds
