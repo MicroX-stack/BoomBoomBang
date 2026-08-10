@@ -865,7 +865,7 @@ input:checked+.toggle-slider:before {
     top: 0;
     bottom: 0;
     height: 100%;
-    transition: width 0.3s ease-out;
+    transition: width 0.08s ease-out; /* ลดเวลา transition เพื่อให้หลอดเลือดกระตุกไปมาเวลายื้อกัน */
 }
 
 .p1-portion {
@@ -2157,7 +2157,7 @@ input:checked+.toggle-slider:before {
     top: -32px;
     object-fit: contain;
     z-index: 10;
-    transition: all 0.2s ease-out;
+    transition: all 0.08s ease-out; /* ลดเวลา transition เพื่อให้รูปแมวกระตุกไปมาตอนชนกัน */
     filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
     background: transparent !important;
     border: none !important;
