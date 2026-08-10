@@ -1205,14 +1205,12 @@ function buildJigsawBoardHTML() {
     
     let imageStyles = ''
     
-    // ทำให้รูปใหญ่ขึ้น (130% - 150%) เพื่อให้ซูมเห็นชัดๆ ไม่เล็กเกินไป
-    // และสุ่มเลื่อนตำแหน่ง (ติดลบ) เพื่อไม่ให้ภาพอยู่ตรงกลางที่เดิมทุกรอบ โดยไม่ให้เห็นขอบขาว
-    const size = 130 + Math.floor(Math.random() * 21) // 130% to 150%
-    const maxOffset = size - 100 // e.g., 30 to 50
-    let top = -Math.floor(Math.random() * maxOffset)
-    let left = -Math.floor(Math.random() * maxOffset)
+    // ใช้ขนาด 100% (พอดีรูปต้นฉบับ) และใช้ object-fit: contain
+    // แต่สุ่ม object-position เพื่อเลื่อนตำแหน่งรูปไปซ้าย-ขวา-บน-ล่าง ไม่ให้อยู่ตรงกลางเป๊ะทุกรอบ
+    const posX = Math.floor(Math.random() * 101) // 0% to 100%
+    const posY = Math.floor(Math.random() * 101) // 0% to 100%
     
-    imageStyles = `width: ${size}%; height: ${size}%; position: absolute; top: ${top}%; left: ${left}%; object-fit: cover;`
+    imageStyles = `width: 100%; height: 100%; position: absolute; top: 0; left: 0; object-fit: contain; object-position: ${posX}% ${posY}%;`
 
     return `
         <div class="bonus-reveal-bar" style="margin-bottom: 5px;">
@@ -1651,6 +1649,7 @@ function selectOption(option) {
             jigsawImg.style.transition = 'all 0.5s ease'
             jigsawImg.style.top = '0'
             jigsawImg.style.left = '0'
+            jigsawImg.style.objectPosition = 'center'
         }
     }
 
@@ -1704,6 +1703,7 @@ function onQuestionTimeout() {
             jigsawImg.style.transition = 'all 0.5s ease'
             jigsawImg.style.top = '0'
             jigsawImg.style.left = '0'
+            jigsawImg.style.objectPosition = 'center'
         }
     }
 
