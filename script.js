@@ -780,14 +780,6 @@ function updateGameScreenUI() {
     let p1Factor = Math.min(1, p1Smashes / MAX_SMASHES)
     let p2Factor = Math.min(1, p2Smashes / MAX_SMASHES)
 
-    // ป้องกันไม่ให้หลอดเลือดและแมววิ่งทับกัน (Overlap)
-    // ถ้าผลรวมเกิน 1 (เกิน 100% ของหลอด) ให้หักส่วนเกินออกคนละครึ่ง เพื่อให้ดูเหมือนดันกันอยู่ตรงกลาง!
-    if (p1Factor + p2Factor > 1) {
-        const excess = (p1Factor + p2Factor) - 1
-        p1Factor -= excess / 2
-        p2Factor -= excess / 2
-    }
-
     const p1HpPortion = p1Factor * 100
     const p2HpPortion = p2Factor * 100
 
@@ -903,10 +895,16 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         }
     }
     if (playerKey === 'p1') {
-        p1Smashes++
+        let hitPower = 1
+        if (p1Smashes + p2Smashes >= MAX_SMASHES) {
+            hitPower = 3 // เพิ่มความแรง 3 เท่าเมื่อชนกัน เพื่อไม่ให้ยื้อเกมนานเกินไป
+        }
+        p1Smashes += hitPower
+        
         // They clash! P1 pushes P2 back!
         if (p1Smashes + p2Smashes > MAX_SMASHES) {
-            p2Smashes -= 0.3
+            const overflow = (p1Smashes + p2Smashes) - MAX_SMASHES
+            p2Smashes -= overflow
         }
         
         // Ensure bounds
@@ -964,10 +962,16 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
             endSmashGame('p1')
         }
     } else {
-        p2Smashes++
+        let hitPower = 1
+        if (p1Smashes + p2Smashes >= MAX_SMASHES) {
+            hitPower = 3 // เพิ่มความแรง 3 เท่าเมื่อชนกัน เพื่อไม่ให้ยื้อเกมนานเกินไป
+        }
+        p2Smashes += hitPower
+        
         // They clash! P2 pushes P1 back!
         if (p1Smashes + p2Smashes > MAX_SMASHES) {
-            p1Smashes -= 0.3
+            const overflow = (p1Smashes + p2Smashes) - MAX_SMASHES
+            p1Smashes -= overflow
         }
         
         // Ensure bounds
