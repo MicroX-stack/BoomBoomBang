@@ -1205,22 +1205,14 @@ function buildJigsawBoardHTML() {
     
     let imageStyles = ''
     
-    // สุ่มขนาดให้เล็กลงมาก (35% - 50%) เพื่อให้สามารถไปอยู่ตามมุมซ้ายสุด ขวาสุด บนสุด หรือล่างสุดได้แบบอิสระเต็มที่
-    // จะได้ไม่มีทางจำตำแหน่งเดิมได้เลย
-    const size = 35 + Math.floor(Math.random() * 15)
-    const maxPos = 100 - size
-    let top = Math.floor(Math.random() * maxPos)
-    let left = Math.floor(Math.random() * maxPos)
+    // ทำให้รูปใหญ่ขึ้น (130% - 150%) เพื่อให้ซูมเห็นชัดๆ ไม่เล็กเกินไป
+    // และสุ่มเลื่อนตำแหน่ง (ติดลบ) เพื่อไม่ให้ภาพอยู่ตรงกลางที่เดิมทุกรอบ โดยไม่ให้เห็นขอบขาว
+    const size = 130 + Math.floor(Math.random() * 21) // 130% to 150%
+    const maxOffset = size - 100 // e.g., 30 to 50
+    let top = -Math.floor(Math.random() * maxOffset)
+    let left = -Math.floor(Math.random() * maxOffset)
     
-    // ดันไม่ให้อยู่ตรงกลางเป๊ะเกินไป
-    if (top > (maxPos/2 - 10) && top < (maxPos/2 + 10)) {
-        top = Math.random() > 0.5 ? 0 : maxPos
-    }
-    if (left > (maxPos/2 - 10) && left < (maxPos/2 + 10)) {
-        left = Math.random() > 0.5 ? 0 : maxPos
-    }
-    
-    imageStyles = `width: ${size}%; height: ${size}%; position: absolute; top: ${top}%; left: ${left}%; object-fit: contain;`
+    imageStyles = `width: ${size}%; height: ${size}%; position: absolute; top: ${top}%; left: ${left}%; object-fit: cover;`
 
     return `
         <div class="bonus-reveal-bar" style="margin-bottom: 5px;">
