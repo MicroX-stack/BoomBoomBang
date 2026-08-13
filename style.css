@@ -3082,10 +3082,8 @@ input:checked+.toggle-slider:before {
 }
 
 .home-btn-img-wrapper:nth-child(2) {
-    margin-top: -70%;
+    margin-top: 10px; /* Changed from -70% */
 }
-
-
 
 .home-btn-img-wrapper {
     position: relative;
@@ -3117,15 +3115,7 @@ input:checked+.toggle-slider:before {
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.home-btn-img-wrapper:first-child .home-btn-img,
-.home-btn-img-wrapper:first-child .invisible-overlay-btn {
-    clip-path: inset(0 10% 15% 0);
-}
-
-.home-btn-img-wrapper:nth-child(2) .home-btn-img,
-.home-btn-img-wrapper:nth-child(2) .invisible-overlay-btn {
-    clip-path: inset(15% 0 0 0);
-}
+/* Removed clip-path rules that were causing overlap and cropping */
 
 .home-btn-img-wrapper:has(.invisible-overlay-btn:hover) .home-btn-img {
     transform: scale(1.05) rotate(-2deg);
