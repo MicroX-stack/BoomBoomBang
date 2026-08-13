@@ -3308,8 +3308,8 @@ input:checked+.toggle-slider:before {
     right: 20px;
     background: transparent;
     border: none;
-    width: 8vw;
-    max-width: 100px;
+    width: 12vw;
+    max-width: 150px;
     cursor: pointer;
     z-index: 1000;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
