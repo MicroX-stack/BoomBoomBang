@@ -1174,19 +1174,20 @@ function getPlayerScore(playerKey) {
 }
 
 function shouldTriggerBonusRound() {
-    // ปิดการจำกัดจำนวนครั้งของ Jigsaw เพื่อให้มันสุ่มออกได้เรื่อยๆ
-    // if (bonusQuestionIndex >= bonusQuestionPool.length) return false
+    if (window.bonusTriggerCount === undefined) window.bonusTriggerCount = 0;
     
-    // ตั้งค่าตัวแปรเก็บว่าโบนัสครั้งล่าสุดออกมาตอนไหน
-    if (window.lastBonusAt === undefined) window.lastBonusAt = -99;
-    
-    // เว้นระยะอย่างน้อย 3 คำถาม ถึงจะมีโอกาสออก Jigsaw อีกครั้ง (ไม่ออกถี่ติดกัน)
-    if (totalQuestionsAnswered < 2) return false;
-    if (totalQuestionsAnswered - window.lastBonusAt < 3) return false;
-    
-    // สุ่มโอกาส 30% ที่จะเจอด่าน Jigsaw
-    if (Math.random() < 0.30) {
-        window.lastBonusAt = totalQuestionsAnswered;
+    // บังคับให้ออกเป๊ะๆ 3 ครั้งในการเล่น 1 รอบ 
+    // โดยออกเมื่อตอบคำถามปกติไปแล้ว 4 ข้อ, 9 ข้อ, และ 14 ข้อ
+    if (window.bonusTriggerCount === 0 && totalQuestionsAnswered === 4) {
+        window.bonusTriggerCount++;
+        return true;
+    }
+    if (window.bonusTriggerCount === 1 && totalQuestionsAnswered === 9) {
+        window.bonusTriggerCount++;
+        return true;
+    }
+    if (window.bonusTriggerCount === 2 && totalQuestionsAnswered === 14) {
+        window.bonusTriggerCount++;
         return true;
     }
     
@@ -1824,6 +1825,7 @@ function resetMatchState(preserveCategory = false) {
     questionsAnsweredLevel3 = 0
     questionsAnsweredBonus = 0
     totalQuestionsAnswered = 0
+    window.bonusTriggerCount = 0
     bonusRevealsRemaining = 0
     revealedSquares = []
     currentRound = 1
