@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400..700&family=Itim&family=Orbitron:wght@700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=10">
+    <link rel="stylesheet" href="style.css?v=11">
     <link rel="icon" href="data:,">
 
     <!-- MediaPipe Libraries สำหรับระบบตรวจจับและวาดโครงมือ -->
@@ -271,15 +271,26 @@
 
     <!-- ================= หน้าที่ 6: หน้าตั้งค่า (SETTINGS SCREEN) ================= -->
     <div id="settings-screen" class="screen hidden">
-        <div class="settings-bg-container">
-            <img src="setup/gemini-watermark-removed (4).png" class="settings-bg-img" alt="Settings Background">
-            
-            <div class="settings-content-wrapper">
-                <!-- Add back button at bottom center of the white frame -->
-                <button id="btn-back-from-settings" class="btn-settings-back">
-                    <img src="setup/back (1).png" alt="Back to Home">
-                </button>
-            </div>
+        <!-- Page 1 -->
+        <div id="settings-page-1" class="settings-bg-container" style="display: flex;">
+            <img src="setup/1 .png" class="settings-bg-img" alt="How to play page 1">
+            <button id="btn-back-from-settings" class="btn-settings-back">
+                <img src="setup/back (1).png" alt="Back to Home">
+            </button>
+            <button id="btn-settings-next" class="btn-settings-nav next">
+                <img src="setup/next.png" alt="Next Page">
+            </button>
+        </div>
+
+        <!-- Page 2 -->
+        <div id="settings-page-2" class="settings-bg-container" style="display: none;">
+            <img src="setup/2.png" class="settings-bg-img" alt="How to play page 2">
+            <button id="btn-back-from-settings-2" class="btn-settings-back">
+                <img src="setup/back (1).png" alt="Back to Home">
+            </button>
+            <button id="btn-settings-prev" class="btn-settings-nav prev">
+                <img src="setup/backButton.png" alt="Previous Page">
+            </button>
         </div>
     </div>
 
@@ -293,7 +304,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=6"></script>
+    <script src="script.js?v=7"></script>
 </body>
 
 </html>

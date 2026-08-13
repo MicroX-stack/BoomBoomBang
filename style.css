@@ -3204,6 +3204,40 @@ input:checked+.toggle-slider:before {
     transform: translateX(-50%) scale(0.95);
 }
 
+.btn-settings-nav {
+    position: absolute;
+    bottom: 5%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 20;
+    width: 12vw;
+    max-width: 150px;
+    min-width: 100px;
+    outline: none;
+}
+
+.btn-settings-nav.next,
+.btn-settings-nav.prev {
+    right: 5%;
+}
+
+.btn-settings-nav img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+}
+
+.btn-settings-nav:hover {
+    transform: scale(1.1);
+}
+
+.btn-settings-nav:active {
+    transform: scale(0.95);
+}
+
 /* 
    ==========================================
    16:9 & Widescreen Compatibility (Notebooks)

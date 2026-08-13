@@ -2586,18 +2586,51 @@ if (btnStartSound) {
 
 // ปุ่มล่องหนหน้าแรก: ตั้งค่า
 const btnStartSettings = document.getElementById('btn-start-settings')
+
+// ปุ่มย้อนกลับจากหน้าตั้งค่าไปหน้าแรก
+const btnBackFromSettings = document.getElementById('btn-back-from-settings')
+const btnBackFromSettings2 = document.getElementById('btn-back-from-settings-2')
+const settingsPage1 = document.getElementById('settings-page-1')
+const settingsPage2 = document.getElementById('settings-page-2')
+const btnSettingsNext = document.getElementById('btn-settings-next')
+const btnSettingsPrev = document.getElementById('btn-settings-prev')
+
 if (btnStartSettings) {
     btnStartSettings.addEventListener('click', () => {
+        // Reset to page 1 when opening settings
+        if(settingsPage1 && settingsPage2) {
+            settingsPage1.style.display = 'flex'
+            settingsPage2.style.display = 'none'
+        }
         setScreen('settings-screen')
     })
 }
 
-// ปุ่มย้อนกลับจากหน้าตั้งค่าไปหน้าแรก
-const btnBackFromSettings = document.getElementById('btn-back-from-settings')
-if (btnBackFromSettings) {
-    btnBackFromSettings.addEventListener('click', () => {
-        playBeep(554.37, 0.15)
-        setScreen('start-screen')
+const backToHomeHandler = () => {
+    playBeep(554.37, 0.15)
+    setScreen('start-screen')
+}
+
+if (btnBackFromSettings) btnBackFromSettings.addEventListener('click', backToHomeHandler)
+if (btnBackFromSettings2) btnBackFromSettings2.addEventListener('click', backToHomeHandler)
+
+if (btnSettingsNext) {
+    btnSettingsNext.addEventListener('click', () => {
+        playBeep(880, 0.25)
+        if(settingsPage1 && settingsPage2) {
+            settingsPage1.style.display = 'none'
+            settingsPage2.style.display = 'flex'
+        }
+    })
+}
+
+if (btnSettingsPrev) {
+    btnSettingsPrev.addEventListener('click', () => {
+        playBeep(880, 0.25)
+        if(settingsPage1 && settingsPage2) {
+            settingsPage2.style.display = 'none'
+            settingsPage1.style.display = 'flex'
+        }
     })
 }
 
