@@ -609,7 +609,7 @@ const categoryQuestions = {
 // ==========================================
 function setScreen(screenName) {
     currentScreen = screenName
-    const screens = ['start-screen', 'category-screen', 'countdown-screen', 'game-screen', 'question-screen', 'score-screen', 'final-screen', 'settings-screen']
+    const screens = ['start-screen', 'category-screen', 'countdown-screen', 'game-screen', 'question-screen', 'score-screen', 'final-screen', 'settings-screen', 'credits-screen']
 
     screens.forEach(s => {
         const el = document.getElementById(s)
