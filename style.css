@@ -3082,7 +3082,7 @@ input:checked+.toggle-slider:before {
 }
 
 .home-btn-img-wrapper:nth-child(2) {
-    margin-top: -18%; /* Bring them very close together */
+    margin-top: -35%; /* Bring them very close together */
 }
 
 .home-btn-img-wrapper {
