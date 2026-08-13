@@ -741,29 +741,28 @@ function startCountdown() {
 
 // ==========================================
 
+
 function showLevelTransition(level, callback) {
     const transitionScreen = document.getElementById('level-transition-screen');
     const transitionImg = document.getElementById('level-transition-img');
     
-    // Set image source
     transitionImg.src = `level/level${level}.png`;
     
     // Reset animation
     transitionImg.style.animation = 'none';
-    void transitionImg.offsetWidth; // trigger reflow
+    void transitionImg.offsetWidth; 
+    transitionImg.style.animation = ''; // MUST clear inline style so CSS applies
     
-    // Show screen
     transitionScreen.classList.remove('hidden');
     transitionScreen.classList.add('active');
     
     setTimeout(() => {
-        // Hide screen
         transitionScreen.classList.remove('active');
         setTimeout(() => {
             transitionScreen.classList.add('hidden');
             callback();
-        }, 500); // fade out duration
-    }, 3000); // Wait 3 seconds for animation
+        }, 500); 
+    }, 3000); 
 }
 
 function startGameScreen() {
@@ -774,8 +773,17 @@ function startGameScreen() {
         
         if (nextLevel !== lastPlayedLevel && nextLevel >= 1 && nextLevel <= 3) {
             lastPlayedLevel = nextLevel;
+            
+            // 1. ไปที่หน้าเกมเลย
+            _internalStartGameScreen();
+            
+            // 2. ล็อกเกมไม่ให้ตีกลองได้ระหว่างขึ้นหน้าคั่น
+            isGameOver = true;
+            
+            // 3. โชว์หน้าคั่นซ้อนทับหน้าเกม
             showLevelTransition(nextLevel, () => {
-                _internalStartGameScreen();
+                // ปลดล็อกเกมเมื่อหน้าคั่นหายไป
+                isGameOver = false;
             });
             return;
         }
