@@ -314,6 +314,7 @@ let bonusQuestionIndex = 0
 let p1JigsawCount = 0
 let p2JigsawCount = 0
 let lastFirstQuestionByCategory = {}
+let lastPlayedLevel = null
 
 // สถานะปุ่มสำหรับตัวเลือก
 let hoveredOptionBtn = null
@@ -739,7 +740,50 @@ function startCountdown() {
 }
 
 // ==========================================
+
+function showLevelTransition(level, callback) {
+    const transitionScreen = document.getElementById('level-transition-screen');
+    const transitionImg = document.getElementById('level-transition-img');
+    
+    // Set image source
+    transitionImg.src = `level/level${level}.png`;
+    
+    // Reset animation
+    transitionImg.style.animation = 'none';
+    void transitionImg.offsetWidth; // trigger reflow
+    
+    // Show screen
+    transitionScreen.classList.remove('hidden');
+    transitionScreen.classList.add('active');
+    
+    setTimeout(() => {
+        // Hide screen
+        transitionScreen.classList.remove('active');
+        setTimeout(() => {
+            transitionScreen.classList.add('hidden');
+            callback();
+        }, 500); // fade out duration
+    }, 3000); // Wait 3 seconds for animation
+}
+
 function startGameScreen() {
+    const isBonus = shouldTriggerBonusRound();
+    if (!isBonus) {
+        const nextQuestion = gameQuestionPool ? gameQuestionPool[gameQuestionIndex] : null;
+        const nextLevel = nextQuestion ? (nextQuestion.level || 1) : 1;
+        
+        if (nextLevel !== lastPlayedLevel && nextLevel >= 1 && nextLevel <= 3) {
+            lastPlayedLevel = nextLevel;
+            showLevelTransition(nextLevel, () => {
+                _internalStartGameScreen();
+            });
+            return;
+        }
+    }
+    _internalStartGameScreen();
+}
+
+function _internalStartGameScreen() {
     setScreen('game-screen')
 
     // โหลด/เปิดกล้องเว็บแคมหลังจากผ่านหน้านับถอยหลังแล้ว
@@ -1775,6 +1819,7 @@ function resetMatchState(preserveCategory = false) {
     currentRound = 1
     isFirstRound = false
     selectedCategory = preserveCategory ? selectedCategory : null
+    lastPlayedLevel = null
     gameQuestionPool = []
     gameQuestionIndex = 0
     bonusQuestionPool = []
