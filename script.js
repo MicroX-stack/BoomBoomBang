@@ -34,6 +34,13 @@ bgmFinal.preload = "auto"
 // ==========================================
 // ระบบเสียง Effect (SFX) แบบ 0-latency (Web Audio API)
 // ==========================================
+
+// Mobile Touch Detection
+function isMobileDevice() {
+    return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1) || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+const isMobile = isMobileDevice();
+
 let audioCtx = null;
 const audioBuffers = {};
 const sfxVolumes = {
@@ -107,6 +114,35 @@ document.addEventListener('click', (e) => {
 })
 
 // เพิ่มเสียง pop เมื่อเอาเมาส์ชี้กล่องเริ่มเกม, ตั้งค่า, และหมวดหมู่
+document.addEventListener('DOMContentLoaded', () => {
+    // Mobile Touch for Game Screen (Drumming)
+    const gameScreenEl = document.getElementById('game-screen');
+    gameScreenEl.addEventListener('touchstart', (e) => {
+        if (!isMobile || currentScreen !== 'game-screen' || isGameOver) return;
+        
+        for (let i = 0; i < e.changedTouches.length; i++) {
+            const touch = e.changedTouches[i];
+            const x = touch.clientX;
+            const y = touch.clientY;
+            const now = Date.now();
+            
+            if (x < window.innerWidth / 2) {
+                // Player 1
+                if (now - (window.lastP1TouchSmash || 0) > SMASH_COOLDOWN) {
+                    window.lastP1TouchSmash = now;
+                    triggerSmash('p1', x, y, {x: x/window.innerWidth, y: y/window.innerHeight});
+                }
+            } else {
+                // Player 2
+                if (now - (window.lastP2TouchSmash || 0) > SMASH_COOLDOWN) {
+                    window.lastP2TouchSmash = now;
+                    triggerSmash('p2', x, y, {x: x/window.innerWidth, y: y/window.innerHeight});
+                }
+            }
+        }
+    });
+})
+
 document.addEventListener('mouseover', (e) => {
     const popTarget = e.target.closest('.home-btn-img-wrapper, .category-btn')
     if (popTarget) {
@@ -595,7 +631,7 @@ function setScreen(screenName) {
     // ซ่อนหรือแสดงกล้องตามหน้าจอเพื่อแยกกันให้ชัดเจน ไม่ให้ทับซ้อนกันในหน้าแรก
     const cameraBg = document.getElementById('camera-bg-container')
     if (cameraBg) {
-        if (screenName === 'game-screen' || screenName === 'question-screen' || screenName === 'score-screen' || screenName === 'final-screen') {
+        if (!isMobile && (screenName === 'game-screen' || screenName === 'question-screen' || screenName === 'score-screen' || screenName === 'final-screen')) {
             cameraBg.style.display = 'block'
         } else {
             cameraBg.style.display = 'none'
@@ -797,7 +833,7 @@ function _internalStartGameScreen() {
     setScreen('game-screen')
 
     // โหลด/เปิดกล้องเว็บแคมหลังจากผ่านหน้านับถอยหลังแล้ว
-    if (!mediaStream) {
+    if (!mediaStream && !isMobile) {
         startWebcam().catch(e => {
             console.error("ไม่สามารถเริ่มกล้องเว็บแคมได้:", e)
         })
@@ -1024,7 +1060,6 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         
         // They clash! P2 pushes P1 back!
         if (p1Smashes + p2Smashes > MAX_SMASHES) {
-            const overflow = (p1Smashes + p2Smashes) - MAX_SMASHES
             p1Smashes -= overflow
         }
         
@@ -1254,9 +1289,11 @@ function getQuestionModeText() {
 }
 
 function buildJigsawBoardHTML() {
-    const squaresHTML = Array.from({ length: 36 }, (_, index) => `
-        <button class="jigsaw-square hover-target${revealedSquares.includes(index) ? ' revealed' : ''}" data-hover-key="JIGSAW_${index}" data-square="${index}" ${revealedSquares.includes(index) || bonusRevealsRemaining <= 0 ? 'disabled' : ''}></button>
-    `).join('')
+    const squaresHTML = Array.from({ length: 36 }, (_, index) => {
+        const mobileClick = isMobile ? `onclick="if(bonusRevealsRemaining > 0 && !this.classList.contains('revealed')) revealJigsawSquareCustom(this, ${index})"` : ''
+        return `
+        <button class="jigsaw-square hover-target${revealedSquares.includes(index) ? ' revealed' : ''}" data-hover-key="JIGSAW_${index}" data-square="${index}" ${revealedSquares.includes(index) || bonusRevealsRemaining <= 0 ? 'disabled' : ''} ${mobileClick}></button>
+    `}).join('')
     
     let imageStyles = ''
     
@@ -1277,7 +1314,9 @@ function buildJigsawBoardHTML() {
                 ${squaresHTML}
             </div>
         </div>
-        <div class="jigsaw-reveal-note" style="margin-top: 5px; font-size: 1.1rem;">ใช้นิ้วชี้ค้างบนช่องที่อยากเปิดได้เอง เปิดได้ทั้งหมด 3 ครั้ง</div>
+        <div class="jigsaw-reveal-note" style="margin-top: 5px; font-size: 1.1rem;">
+            ${isMobile ? 'แตะที่ช่องที่อยากเปิดได้เลย เปิดได้ทั้งหมด 3 ครั้ง' : 'ใช้นิ้วชี้ค้างบนช่องที่อยากเปิดได้เอง เปิดได้ทั้งหมด 3 ครั้ง'}
+        </div>
     `
 }
 
@@ -1941,6 +1980,7 @@ function stopCurrentStream() {
 }
 
 function startWebcam(targetDeviceId = null) {
+    if (isMobile) return;
     return new Promise(async (resolve, reject) => {
         stopCurrentStream()
 
@@ -2030,6 +2070,7 @@ async function updateCameraSelector(activeDeviceId = null) {
 // ระบบวิเคราะห์โครงสร้างมือ (MediaPipe Hands)
 // ==========================================
 function initHandsModel() {
+    if (isMobile) return;
     if (handsModel) return
 
     if (typeof Hands === 'undefined') {
@@ -2058,6 +2099,7 @@ function initHandsModel() {
 }
 
 function startHandTracking() {
+    if (isMobile) return;
     if (!handsModel) {
         initHandsModel()
     }
@@ -2554,6 +2596,24 @@ if (btnStartSettings) {
 const btnBackFromSettings = document.getElementById('btn-back-from-settings')
 if (btnBackFromSettings) {
     btnBackFromSettings.addEventListener('click', () => {
+        playBeep(554.37, 0.15)
+        setScreen('start-screen')
+    })
+}
+
+// ปุ่ม hw ไปหน้าเครดิต
+const btnHw = document.getElementById('btn-hw')
+if (btnHw) {
+    btnHw.addEventListener('click', () => {
+        playBeep(880, 0.25)
+        setScreen('credits-screen')
+    })
+}
+
+// ปุ่มย้อนกลับจากหน้าเครดิตไปหน้าแรก
+const btnBackFromCredits = document.getElementById('btn-back-from-credits')
+if (btnBackFromCredits) {
+    btnBackFromCredits.addEventListener('click', () => {
         playBeep(554.37, 0.15)
         setScreen('start-screen')
     })

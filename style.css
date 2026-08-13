@@ -3331,3 +3331,52 @@ input:checked+.toggle-slider:before {
 .hw-corner-btn:active {
     transform: scale(0.95);
 }
+
+/* ==========================================
+   Credits Screen
+   ========================================== */
+.credits-bg-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+}
+
+.credits-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.btn-credits-back {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 20;
+    width: 15vw;
+    max-width: 200px;
+    outline: none;
+}
+
+.btn-credits-back img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+}
+
+.btn-credits-back:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.btn-credits-back:active {
+    transform: translate(-50%, -50%) scale(0.95);
+}
