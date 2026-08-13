@@ -22,7 +22,7 @@ bgmMenu.preload = "auto"
 
 const bgmGame = new Audio('music/game.mp3')
 bgmGame.loop = true
-bgmGame.volume = 0.5 // ปรับให้ดังขึ้นตามที่ขอ
+bgmGame.volume = 0.35 // เบาลงมาหน่อย
 bgmGame.preload = "auto"
 
 const bgmFinal = new Audio('music/final.mp3')
@@ -771,27 +771,24 @@ function showLevelTransition(level, callback) {
 }
 
 function startGameScreen() {
-    const isBonus = shouldTriggerBonusRound();
-    if (!isBonus) {
-        const nextQuestion = gameQuestionPool ? gameQuestionPool[gameQuestionIndex] : null;
-        const nextLevel = nextQuestion ? (nextQuestion.level || 1) : 1;
+    const nextQuestion = gameQuestionPool ? gameQuestionPool[gameQuestionIndex] : null;
+    const nextLevel = nextQuestion ? (nextQuestion.level || 1) : 1;
+    
+    if (nextLevel !== lastPlayedLevel && nextLevel >= 1 && nextLevel <= 3) {
+        lastPlayedLevel = nextLevel;
         
-        if (nextLevel !== lastPlayedLevel && nextLevel >= 1 && nextLevel <= 3) {
-            lastPlayedLevel = nextLevel;
-            
-            // 1. ไปที่หน้าเกมเลย
-            _internalStartGameScreen();
-            
-            // 2. ล็อกเกมไม่ให้ตีกลองได้ระหว่างขึ้นหน้าคั่น
-            isGameOver = true;
-            
-            // 3. โชว์หน้าคั่นซ้อนทับหน้าเกม
-            showLevelTransition(nextLevel, () => {
-                // ปลดล็อกเกมเมื่อหน้าคั่นหายไป
-                isGameOver = false;
-            });
-            return;
-        }
+        // 1. ไปที่หน้าเกมเลย
+        _internalStartGameScreen();
+        
+        // 2. ล็อกเกมไม่ให้ตีกลองได้ระหว่างขึ้นหน้าคั่น
+        isGameOver = true;
+        
+        // 3. โชว์หน้าคั่นซ้อนทับหน้าเกม
+        showLevelTransition(nextLevel, () => {
+            // ปลดล็อกเกมเมื่อหน้าคั่นหายไป
+            isGameOver = false;
+        });
+        return;
     }
     _internalStartGameScreen();
 }
