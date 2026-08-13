@@ -2582,6 +2582,12 @@ function preloadAllGameImages() {
         'blood/cat2.png'
     ];
     
+    const levelAssets = [
+        'level/level1.png',
+        'level/level2.png',
+        'level/level3.png'
+    ];
+    
     const questionAssets = [];
     for (const cat in categoryQuestions) {
         for (const level in categoryQuestions[cat]) {
@@ -2591,7 +2597,7 @@ function preloadAllGameImages() {
         }
     }
     
-    const allAssets = [...finalAssets, ...bloodAssets, ...questionAssets];
+    const allAssets = [...finalAssets, ...bloodAssets, ...levelAssets, ...questionAssets];
     
     // Create an invisible div to hold the images so the browser definitely caches them
     const preloadContainer = document.createElement('div');
