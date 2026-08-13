@@ -44,7 +44,8 @@ const sfxVolumes = {
     'answer': 1.0,
     'error': 1.0,
     'pop': 1.0,
-    'correct': 1.0
+    'correct': 1.0,
+    'leveleffect': 1.0
 };
 
 // ใช้เป็น string ID แทน Audio Object เดิม
@@ -56,6 +57,7 @@ const sfxAnswer = 'answer';
 const sfxError = 'error';
 const sfxPop = 'pop';
 const sfxCorrect = 'correct';
+const sfxLevelEffect = 'leveleffect';
 
 function initAudioContext() {
     if (audioCtx) return;
@@ -755,6 +757,9 @@ function showLevelTransition(level, callback) {
     
     transitionScreen.classList.remove('hidden');
     transitionScreen.classList.add('active');
+    
+    // เล่นเสียง Effect ทันทีที่โชว์หน้าคั่น
+    playSFX(sfxLevelEffect);
     
     setTimeout(() => {
         transitionScreen.classList.remove('active');
