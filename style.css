@@ -3187,6 +3187,7 @@ input:checked+.toggle-slider:before {
     width: 10vw;
     max-width: 150px;
     min-width: 100px;
+    z-index: 20;
 }
 
 .btn-settings-back img {
