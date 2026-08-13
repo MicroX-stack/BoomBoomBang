@@ -22,7 +22,7 @@ bgmMenu.preload = "auto"
 
 const bgmGame = new Audio('music/game.mp3')
 bgmGame.loop = true
-bgmGame.volume = 0.2 // เบาๆ เพลินๆ ตามที่ขอ
+bgmGame.volume = 0.5 // ปรับให้ดังขึ้นตามที่ขอ
 bgmGame.preload = "auto"
 
 const bgmFinal = new Audio('music/final.mp3')
