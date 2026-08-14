@@ -695,19 +695,15 @@ let drumStopTimer = null
 
 function playDrumSound(pitch = 140) {
     const now = Date.now()
-    if (now - lastBoomTime < 100) return // กันเสียงรั่ว
+    if (now - lastBoomTime < 80) return // กันเสียงรั่ว
     lastBoomTime = now
     
     if (audioCtx && audioBuffers['boom']) {
-        // ตัดหางเสียงเก่าทิ้งทันทีเมื่อตีใหม่ (เหมือน currentTime = 0)
-        if (currentDrumSource) {
-            try {
-                currentDrumSource.stop()
-            } catch(e) {}
-        }
-        
         const source = audioCtx.createBufferSource()
         source.buffer = audioBuffers['boom']
+        
+        // ปรับโทนเสียง (Pitch) ให้ต่างกันระหว่าง P1 และ P2
+        source.playbackRate.value = pitch / 140
         
         const gainNode = audioCtx.createGain()
         gainNode.gain.value = sfxVolumes['boom'] || 1.0
@@ -715,18 +711,6 @@ function playDrumSound(pitch = 140) {
         source.connect(gainNode)
         gainNode.connect(audioCtx.destination)
         source.start(0)
-        
-        currentDrumSource = source
-        
-        // ตัดหางเสียง (Echo) ทิ้ง ทันทีที่ผู้เล่นหยุดตี (เหมือนโค้ดเดิมเป๊ะๆ)
-        if (drumStopTimer) clearTimeout(drumStopTimer)
-        drumStopTimer = setTimeout(() => {
-            if (currentDrumSource) {
-                try {
-                    currentDrumSource.stop()
-                } catch(e) {}
-            }
-        }, 250) // ถ้าหยุดตีเกิน 0.25 วินาที ให้ตัดเสียงเลย
     }
 }
 
@@ -972,16 +956,14 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         const bongoP1 = document.querySelector('#p1-ice-block .bongo-drums-img');
         if (bongoP1) {
             bongoP1.classList.remove('bongo-hit-anim');
-            void bongoP1.offsetWidth; // Trigger reflow
-            bongoP1.classList.add('bongo-hit-anim');
+            requestAnimationFrame(() => bongoP1.classList.add('bongo-hit-anim'));
         }
     } else {
         playDrumSound(110) // กลองผู้เล่น 2 (โทนทุ้มต่ำกว่า)
         const bongoP2 = document.querySelector('#p2-ice-block .bongo-drums-img');
         if (bongoP2) {
             bongoP2.classList.remove('bongo-hit-anim');
-            void bongoP2.offsetWidth; // Trigger reflow
-            bongoP2.classList.add('bongo-hit-anim');
+            requestAnimationFrame(() => bongoP2.classList.add('bongo-hit-anim'));
         }
     }
     if (playerKey === 'p1') {
@@ -1015,15 +997,13 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
 
         if (catContainer) {
             catContainer.classList.remove('drumming-left', 'drumming-right')
-            void catContainer.offsetWidth
-            catContainer.classList.add(catSide)
+            requestAnimationFrame(() => catContainer.classList.add(catSide))
             setTimeout(() => catContainer.classList.remove('drumming-left', 'drumming-right'), 120)
         }
 
         if (p1IceBlock) {
             p1IceBlock.classList.remove('drum-hit-left', 'drum-hit-right')
-            void p1IceBlock.offsetWidth
-            p1IceBlock.classList.add(drumSide)
+            requestAnimationFrame(() => p1IceBlock.classList.add(drumSide))
             setTimeout(() => p1IceBlock.classList.remove('drum-hit-left', 'drum-hit-right'), 100)
         }
 
@@ -1031,8 +1011,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         const p1BongoImg = p1IceBlock ? p1IceBlock.querySelector('.bongo-drums-img') : null
         if (p1BongoImg) {
             p1BongoImg.classList.remove('drum-hit')
-            void p1BongoImg.offsetWidth
-            p1BongoImg.classList.add('drum-hit')
+            requestAnimationFrame(() => p1BongoImg.classList.add('drum-hit'))
             setTimeout(() => {
                 p1BongoImg.classList.remove('drum-hit')
             }, 200)
@@ -1081,15 +1060,13 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
 
         if (catContainer) {
             catContainer.classList.remove('drumming-left', 'drumming-right')
-            void catContainer.offsetWidth
-            catContainer.classList.add(catSide)
+            requestAnimationFrame(() => catContainer.classList.add(catSide))
             setTimeout(() => catContainer.classList.remove('drumming-left', 'drumming-right'), 120)
         }
 
         if (p2IceBlock) {
             p2IceBlock.classList.remove('drum-hit-left', 'drum-hit-right')
-            void p2IceBlock.offsetWidth
-            p2IceBlock.classList.add(drumSide)
+            requestAnimationFrame(() => p2IceBlock.classList.add(drumSide))
             setTimeout(() => p2IceBlock.classList.remove('drum-hit-left', 'drum-hit-right'), 100)
         }
 
@@ -1097,8 +1074,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         const p2BongoImg = p2IceBlock ? p2IceBlock.querySelector('.bongo-drums-img') : null
         if (p2BongoImg) {
             p2BongoImg.classList.remove('drum-hit')
-            void p2BongoImg.offsetWidth
-            p2BongoImg.classList.add('drum-hit')
+            requestAnimationFrame(() => p2BongoImg.classList.add('drum-hit'))
             setTimeout(() => {
                 p2BongoImg.classList.remove('drum-hit')
             }, 200)
@@ -2086,7 +2062,7 @@ function initHandsModel() {
 
         handsModel.setOptions({
             maxNumHands: 4,
-            modelComplexity: 1,
+            modelComplexity: 0,
             minDetectionConfidence: 0.25,
             minTrackingConfidence: 0.25
         })
