@@ -2158,10 +2158,17 @@ function onHandResults(results) {
         let p2HandsList = []
 
         for (const landmarks of results.multiHandLandmarks) {
-            const avgX = landmarks.reduce((sum, lm) => sum + lm.x, 0) / landmarks.length
+            // ใช้พิกัดข้อมือ (landmarks[0].x) แทนค่าเฉลี่ย เพื่อความแม่นยำและป้องกันนิ้วล้ำเส้น
+            const wristX = landmarks[0].x
+            
+            // สร้าง Dead Zone ตรงกลางจอ (0.45 - 0.55) ถ้ายื่นข้อมือล้ำเข้ามาตรงกลาง ให้ไม่นับมือนี้เลย
+            // เพื่อป้องกันบั๊กมือข้ามจอแล้วไปช่วยฝั่งตรงข้ามตีกลองรัวๆ จนเกมจบ (ค้าง)
+            if (wristX > 0.45 && wristX < 0.55) {
+                continue
+            }
 
-            // avgX > 0.5 คือซีกซ้ายจอ (Player 1), avgX <= 0.5 คือซีกขวาจอ (Player 2)
-            const isPlayer1 = avgX > 0.5
+            // wristX > 0.5 คือซีกซ้ายจอ (Player 1), wristX <= 0.5 คือซีกขวาจอ (Player 2)
+            const isPlayer1 = wristX > 0.5
 
             if (isPlayer1) p1HandsList.push(landmarks)
             else p2HandsList.push(landmarks)
@@ -2178,6 +2185,10 @@ function onHandResults(results) {
         // (ลดอาการมือสลับตำแหน่งกันไปมาทำให้คำนวณความเร็วมือผิดพลาด)
         p1HandsList.sort((a, b) => a[0].x - b[0].x)
         p2HandsList.sort((a, b) => a[0].x - b[0].x)
+
+        // จำกัดให้รับได้สูงสุดแค่ฝั่งละ 2 มือเท่านั้น ป้องกันบั๊กรัวกลอง
+        p1HandsList = p1HandsList.slice(0, 2)
+        p2HandsList = p2HandsList.slice(0, 2)
 
         // เช็คจังหวะทุบลง (Smash) แยกต่อมือ ทำให้ผู้เล่นใช้ 2 มือตีพร้อมกันได้จริง
         if (currentScreen === 'game-screen' && !isGameOver) {
