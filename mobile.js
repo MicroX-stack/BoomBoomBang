@@ -17,17 +17,17 @@ const toggleHandTracking = document.getElementById('toggle-hand-tracking')
 // ==========================================
 const bgmMenu = new Audio('music/menu.mp3')
 bgmMenu.loop = true
-bgmMenu.volume = 0.5 // เสียงปกติ
+bgmMenu.volume = 0.25 // เสียงปกติ
 bgmMenu.preload = "auto"
 
 const bgmGame = new Audio('music/game.mp3')
 bgmGame.loop = true
-bgmGame.volume = 0.35 // เบาลงมาหน่อย
+bgmGame.volume = 0.15 // เบาลงมาหน่อย
 bgmGame.preload = "auto"
 
 const bgmFinal = new Audio('music/final.mp3')
 bgmFinal.loop = true
-bgmFinal.volume = 0.6 // เพลงฉลอง
+bgmFinal.volume = 0.35 // เพลงฉลอง
 bgmFinal.preload = "auto"
 
 // ==========================================
