@@ -92,6 +92,9 @@ document.addEventListener('click', () => {
 }, { once: true });
 
 function playSFX(audioName) {
+    if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
     if (audioCtx && audioBuffers[audioName]) {
         const source = audioCtx.createBufferSource();
         source.buffer = audioBuffers[audioName];
@@ -699,6 +702,10 @@ function playDrumSound(pitch = 140) {
     const now = Date.now()
     if (now - lastBoomTime < 100) return // กันเสียงรั่ว
     lastBoomTime = now
+    
+    if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
     
     if (audioCtx && audioBuffers['boom']) {
         // ตัดหางเสียงเก่าทิ้งทันทีเมื่อตีใหม่ (เหมือน currentTime = 0)

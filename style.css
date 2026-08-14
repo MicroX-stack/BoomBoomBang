@@ -1225,6 +1225,11 @@ input:checked+.toggle-slider:before {
     position: relative;
 }
 
+#question-screen .game-half {
+    justify-content: flex-start;
+    padding: 2vh 0;
+}
+
 /* ผู้แพ้: รอก่อนนะ... (กระจกลอยทับเข้ม) */
 .p1-q-half,
 .p2-q-half {
