@@ -1041,7 +1041,8 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         // Animate P1 Progress Cat hitting the health bar!
         const p1ProgressCat = document.getElementById('p1-progress-cat')
         if (p1ProgressCat) {
-            p1ProgressCat.src = 'blood/cat2.png'
+            // สลับรูปภาพแมวทุกครั้งที่ตี (คู่/คี่) เพื่อให้แมวขยับตามจำนวนครั้งที่ตีจริงๆ และไม่ดูเหมือนค้าง
+            p1ProgressCat.src = (p1Smashes % 2 === 0) ? 'blood/cat2.png' : 'blood/cat1.png'
             if (p1ProgressCat.animTimer) clearTimeout(p1ProgressCat.animTimer)
             p1ProgressCat.animTimer = setTimeout(() => {
                 p1ProgressCat.src = 'blood/cat1.png'
@@ -1107,7 +1108,8 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         // Animate P2 Progress Cat hitting the health bar!
         const p2ProgressCat = document.getElementById('p2-progress-cat')
         if (p2ProgressCat) {
-            p2ProgressCat.src = 'blood/cat2.png'
+            // สลับรูปภาพแมวทุกครั้งที่ตี (คู่/คี่) เพื่อให้แมวขยับตามจำนวนครั้งที่ตีจริงๆ และไม่ดูเหมือนค้าง
+            p2ProgressCat.src = (p2Smashes % 2 === 0) ? 'blood/cat2.png' : 'blood/cat1.png'
             if (p2ProgressCat.animTimer) clearTimeout(p2ProgressCat.animTimer)
             p2ProgressCat.animTimer = setTimeout(() => {
                 p2ProgressCat.src = 'blood/cat1.png'
