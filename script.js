@@ -2223,10 +2223,49 @@ function onHandResults(results) {
 
             // ดึงข้อมูลมือที่จะควบคุมชี้คำตอบ:
             let winnerHand = null
-            // ในหน้าตอบคำถามหรือหน้าจบ ให้รับค่าจากมือแรกที่เจอเลย
-            // เพื่อป้องกันเวลามือผู้ชนะยื่นข้ามเส้นกลางจอแล้วข้อมือสลับฝั่ง หรือตกไปอยู่ใน Dead Zone
+            
             if (results.multiHandLandmarks.length > 0) {
-                winnerHand = results.multiHandLandmarks[0]
+                // 1. ถ้าพอยน์เตอร์ทำงานอยู่แล้ว ให้ "ล็อคเป้า" ติดตามมือเดิมที่อยู่ใกล้ที่สุด
+                // เพื่อให้ผู้ชนะสามารถยื่นมือข้ามเส้นกลางจอไปตอบคำถามฝั่งตรงข้ามได้โดยที่พอยน์เตอร์ไม่หาย
+                if (lastRenderedX !== null && lastRenderedY !== null) {
+                    let minDistance = Infinity
+                    let closestHand = null
+                    
+                    for (const landmarks of results.multiHandLandmarks) {
+                        const indexFinger = landmarks[8]
+                        const screenX = (1 - indexFinger.x) * window.innerWidth
+                        const screenY = indexFinger.y * window.innerHeight
+                        
+                        const dx = screenX - lastRenderedX
+                        const dy = screenY - lastRenderedY
+                        const dist = Math.sqrt(dx * dx + dy * dy)
+                        
+                        if (dist < minDistance) {
+                            minDistance = dist
+                            closestHand = landmarks
+                        }
+                    }
+                    
+                    // ถ้ายกมือหนีไปไกลเกินไป (เปลี่ยนคน) จะปล่อยล็อค
+                    if (minDistance < window.innerWidth / 2) { 
+                        winnerHand = closestHand
+                    }
+                } 
+                
+                // 2. ถ้ายังไม่มีมือล็อคเป้า ให้ "ผู้ชนะ" เป็นคนเริ่มชี้ได้ "ฝ่ายเดียว" เท่านั้น! (คนแพ้ห้ามชี้)
+                if (!winnerHand) {
+                    if (currentScreen === 'final-screen') {
+                        winnerHand = results.multiHandLandmarks[0]
+                    } else if (winner === 'p1') {
+                        // P1 ชนะ: มือต้องมาจากซีกซ้ายจอเท่านั้น (wristX > 0.5)
+                        const p1Hands = results.multiHandLandmarks.filter(lm => lm[0].x > 0.5)
+                        if (p1Hands.length > 0) winnerHand = p1Hands[0]
+                    } else if (winner === 'p2') {
+                        // P2 ชนะ: มือต้องมาจากซีกขวาจอเท่านั้น (wristX <= 0.5)
+                        const p2Hands = results.multiHandLandmarks.filter(lm => lm[0].x <= 0.5)
+                        if (p2Hands.length > 0) winnerHand = p2Hands[0]
+                    }
+                }
             }
 
             if (winnerHand) {
