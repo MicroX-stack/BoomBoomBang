@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400..700&family=Itim&family=Orbitron:wght@700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="mobile.css?v=13">
+    <link rel="stylesheet" href="mobile.css?v=14">
     <link rel="icon" href="data:,">
 
     <!-- MediaPipe Libraries สำหรับระบบตรวจจับและวาดโครงมือ -->
@@ -18,9 +18,37 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <style>
+        #portrait-warning {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000;
+            z-index: 999999;
+            color: white;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        @media screen and (orientation: portrait) {
+            #portrait-warning {
+                display: flex;
+            }
+            #app, #camera-bg-container, #hands-canvas {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <div id="portrait-warning">
+        <h1 style="font-family: 'Fredoka', sans-serif; font-size: 2rem; margin-bottom: 20px;">🔄 กรุณาตะแคงหน้าจอ</h1>
+        <p style="font-family: 'Itim', sans-serif; font-size: 1.2rem;">เกมนี้ออกแบบมาให้เล่นในแนวนอน<br>กรุณาหมุนโทรศัพท์ของคุณเพื่อประสบการณ์ที่ดีที่สุดครับ!</p>
+    </div>
+
     <!-- ================= กล้องเว็บแคมเต็มจอเป็นพื้นหลัง (AR Background) ================= -->
     <div id="camera-bg-container" class="camera-bg">
         <video id="webcam" autoplay playsinline muted></video>
