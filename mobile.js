@@ -115,10 +115,11 @@ document.addEventListener('click', (e) => {
 
 // เพิ่มเสียง pop เมื่อเอาเมาส์ชี้กล่องเริ่มเกม, ตั้งค่า, และหมวดหมู่
 document.addEventListener('DOMContentLoaded', () => {
-    // Mobile Touch for Game Screen (Drumming)
     const gameScreenEl = document.getElementById('game-screen');
-    gameScreenEl.addEventListener('touchstart', (e) => {
+    if (gameScreenEl) {
+        gameScreenEl.addEventListener('touchstart', (e) => {
         if (!isMobile || currentScreen !== 'game-screen' || isGameOver) return;
+        e.preventDefault(); // ป้องกันเบราว์เซอร์ซูมหรือเลื่อนจอเวลาตีกลองรัวๆ
         
         for (let i = 0; i < e.changedTouches.length; i++) {
             const touch = e.changedTouches[i];
@@ -140,7 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-    });
+        });
+    }
 })
 
 document.addEventListener('mouseover', (e) => {
