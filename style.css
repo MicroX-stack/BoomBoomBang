@@ -3442,3 +3442,28 @@ input:checked+.toggle-slider:before {
 .btn-credits-back:active {
     transform: translateX(-50%) scale(0.95);
 }
+
+/* ==========================================
+   Mobile native page scrolling for Question Screen
+   ========================================== */
+@media (max-width: 1024px), (pointer: coarse) {
+    body.allow-scroll {
+        overflow-y: auto !important;
+        height: auto !important;
+        min-height: 100vh;
+    }
+    body.allow-scroll #question-screen {
+        position: relative !important;
+        height: auto !important;
+        min-height: 100vh;
+        overflow: visible !important;
+    }
+    body.allow-scroll #question-screen .game-half {
+        height: auto !important;
+        min-height: 100vh;
+    }
+    body.allow-scroll .winner-active-box {
+        height: auto !important;
+        overflow: visible !important;
+    }
+}

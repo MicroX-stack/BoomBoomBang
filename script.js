@@ -622,6 +622,12 @@ function setScreen(screenName) {
         }
     })
 
+    if (screenName === 'question-screen') {
+        document.body.classList.add('allow-scroll');
+    } else {
+        document.body.classList.remove('allow-scroll');
+    }
+
     // คืนปุ่มเริ่มเล่นให้กดได้เมื่อย้อนกลับมาหน้าแรก
     if (screenName === 'start-screen' && btnStart) {
         btnStart.disabled = false
