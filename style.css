@@ -1267,11 +1267,11 @@ input:checked+.toggle-slider:before {
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+    display: block; /* เปลี่ยนจาก flex เป็น block เพื่อแก้ปัญหาเลื่อนหน้าจอใน iOS */
     padding: 40px;
+    text-align: center;
+    overflow-y: scroll; /* บังคับให้ไถลื่นในตัวมันเองได้ */
+    -webkit-overflow-scrolling: touch;
 }
 
 .question-header {
@@ -2547,13 +2547,16 @@ input:checked+.toggle-slider:before {
 }
 
 .winner-active-box {
-    justify-content: flex-start;
-    gap: 12px;
+    display: block;
+    text-align: center;
     padding: 15px 20px 20px;
-    overflow: auto;
+    overflow-y: scroll;
     overscroll-behavior: contain; /* ป้องกัน iOS ดึงจอ */
     -webkit-overflow-scrolling: touch; /* เพิ่มให้ iOS ปัดขึ้นลงได้ลื่นไหล */
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 247, 255, 0.94));
+}
+.winner-active-box > * {
+    margin-bottom: 12px;
 }
 
 .question-meta-strip {
