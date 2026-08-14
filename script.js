@@ -623,8 +623,10 @@ function setScreen(screenName) {
     })
 
     if (screenName === 'question-screen') {
+        document.documentElement.classList.add('allow-scroll');
         document.body.classList.add('allow-scroll');
     } else {
+        document.documentElement.classList.remove('allow-scroll');
         document.body.classList.remove('allow-scroll');
     }
 

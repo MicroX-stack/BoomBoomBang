@@ -3447,10 +3447,18 @@ input:checked+.toggle-slider:before {
    Mobile native page scrolling for Question Screen
    ========================================== */
 @media (max-width: 1024px), (pointer: coarse) {
+    html.allow-scroll,
     body.allow-scroll {
         overflow-y: auto !important;
         height: auto !important;
         min-height: 100vh;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    html.allow-scroll #app,
+    body.allow-scroll #app {
+        height: auto !important;
+        min-height: 100vh;
+        overflow: visible !important;
     }
     body.allow-scroll #question-screen {
         position: relative !important;
