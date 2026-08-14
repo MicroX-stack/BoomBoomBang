@@ -695,19 +695,15 @@ let drumStopTimer = null
 
 function playDrumSound(pitch = 140) {
     const now = Date.now()
-    if (now - lastBoomTime < 100) return // กันเสียงรั่ว
+    if (now - lastBoomTime < 80) return // กันเสียงรั่วและให้รัวได้เต็มที่
     lastBoomTime = now
     
     if (audioCtx && audioBuffers['boom']) {
-        // ตัดหางเสียงเก่าทิ้งทันทีเมื่อตีใหม่ (เหมือน currentTime = 0)
-        if (currentDrumSource) {
-            try {
-                currentDrumSource.stop()
-            } catch(e) {}
-        }
-        
         const source = audioCtx.createBufferSource()
         source.buffer = audioBuffers['boom']
+        
+        // ปรับโทนเสียงให้ต่างกันระหว่าง 2 ผู้เล่น (P1 สูง, P2 ต่ำ)
+        source.playbackRate.value = pitch / 140
         
         const gainNode = audioCtx.createGain()
         gainNode.gain.value = sfxVolumes['boom'] || 1.0
@@ -715,18 +711,6 @@ function playDrumSound(pitch = 140) {
         source.connect(gainNode)
         gainNode.connect(audioCtx.destination)
         source.start(0)
-        
-        currentDrumSource = source
-        
-        // ตัดหางเสียง (Echo) ทิ้ง ทันทีที่ผู้เล่นหยุดตี (เหมือนโค้ดเดิมเป๊ะๆ)
-        if (drumStopTimer) clearTimeout(drumStopTimer)
-        drumStopTimer = setTimeout(() => {
-            if (currentDrumSource) {
-                try {
-                    currentDrumSource.stop()
-                } catch(e) {}
-            }
-        }, 250) // ถ้าหยุดตีเกิน 0.25 วินาที ให้ตัดเสียงเลย
     }
 }
 
@@ -2086,7 +2070,7 @@ function initHandsModel() {
 
         handsModel.setOptions({
             maxNumHands: 4,
-            modelComplexity: 1,
+            modelComplexity: 0,
             minDetectionConfidence: 0.25,
             minTrackingConfidence: 0.25
         })
