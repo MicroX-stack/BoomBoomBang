@@ -3449,6 +3449,8 @@ input:checked+.toggle-slider:before {
 @media (max-width: 1024px), (pointer: coarse) {
     html.allow-scroll,
     body.allow-scroll {
+        position: relative !important;
+        touch-action: auto !important;
         overflow-y: auto !important;
         height: auto !important;
         min-height: 100vh;
