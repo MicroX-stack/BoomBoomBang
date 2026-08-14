@@ -750,6 +750,7 @@ function startCountdown() {
     let count = 3
     countdownNumberEl.textContent = count
     countdownNumberEl.style.animation = 'none'
+    void countdownNumberEl.offsetWidth
     countdownNumberEl.style.animation = 'popIn 0.9s ease-out forwards' // ใช้ 0.9s ป้องกันการซ้อนก่อนรอบถัดไป
     playBeep(440, 0.15) // C4 beep
 
@@ -760,6 +761,7 @@ function startCountdown() {
         if (count === 0) {
             countdownNumberEl.textContent = 'START!'
             countdownNumberEl.style.animation = 'none'
+            void countdownNumberEl.offsetWidth
             countdownNumberEl.style.animation = 'popIn 0.9s ease-out forwards'
             playBeep(880, 0.3) // High beep
         } else if (count < 0) {
@@ -770,6 +772,7 @@ function startCountdown() {
         } else {
             countdownNumberEl.textContent = count
             countdownNumberEl.style.animation = 'none'
+            void countdownNumberEl.offsetWidth
             countdownNumberEl.style.animation = 'popIn 0.9s ease-out forwards'
             playBeep(440, 0.15)
         }
@@ -787,6 +790,7 @@ function showLevelTransition(level, callback) {
     
     // Reset animation
     transitionImg.style.animation = 'none';
+    void transitionImg.offsetWidth; 
     transitionImg.style.animation = ''; // MUST clear inline style so CSS applies
     
     transitionScreen.classList.remove('hidden');
@@ -970,6 +974,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         const bongoP1 = document.querySelector('#p1-ice-block .bongo-drums-img');
         if (bongoP1) {
             bongoP1.classList.remove('bongo-hit-anim');
+            void bongoP1.offsetWidth; // Trigger reflow
             bongoP1.classList.add('bongo-hit-anim');
         }
     } else {
@@ -977,6 +982,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         const bongoP2 = document.querySelector('#p2-ice-block .bongo-drums-img');
         if (bongoP2) {
             bongoP2.classList.remove('bongo-hit-anim');
+            void bongoP2.offsetWidth; // Trigger reflow
             bongoP2.classList.add('bongo-hit-anim');
         }
     }
@@ -1011,12 +1017,14 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
 
         if (catContainer) {
             catContainer.classList.remove('drumming-left', 'drumming-right')
+            void catContainer.offsetWidth
             catContainer.classList.add(catSide)
             setTimeout(() => catContainer.classList.remove('drumming-left', 'drumming-right'), 120)
         }
 
         if (p1IceBlock) {
             p1IceBlock.classList.remove('drum-hit-left', 'drum-hit-right')
+            void p1IceBlock.offsetWidth
             p1IceBlock.classList.add(drumSide)
             setTimeout(() => p1IceBlock.classList.remove('drum-hit-left', 'drum-hit-right'), 100)
         }
@@ -1025,6 +1033,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         const p1BongoImg = p1IceBlock ? p1IceBlock.querySelector('.bongo-drums-img') : null
         if (p1BongoImg) {
             p1BongoImg.classList.remove('drum-hit')
+            void p1BongoImg.offsetWidth
             p1BongoImg.classList.add('drum-hit')
             setTimeout(() => {
                 p1BongoImg.classList.remove('drum-hit')
@@ -1074,12 +1083,14 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
 
         if (catContainer) {
             catContainer.classList.remove('drumming-left', 'drumming-right')
+            void catContainer.offsetWidth
             catContainer.classList.add(catSide)
             setTimeout(() => catContainer.classList.remove('drumming-left', 'drumming-right'), 120)
         }
 
         if (p2IceBlock) {
             p2IceBlock.classList.remove('drum-hit-left', 'drum-hit-right')
+            void p2IceBlock.offsetWidth
             p2IceBlock.classList.add(drumSide)
             setTimeout(() => p2IceBlock.classList.remove('drum-hit-left', 'drum-hit-right'), 100)
         }
@@ -1088,6 +1099,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         const p2BongoImg = p2IceBlock ? p2IceBlock.querySelector('.bongo-drums-img') : null
         if (p2BongoImg) {
             p2BongoImg.classList.remove('drum-hit')
+            void p2BongoImg.offsetWidth
             p2BongoImg.classList.add('drum-hit')
             setTimeout(() => {
                 p2BongoImg.classList.remove('drum-hit')
@@ -1827,7 +1839,6 @@ function showScoreScreen(outcomeText, roundLabel = 'Last Round') {
     }, 1000)
 }
 
-
 function startNextRound() {
     if (scoreCountdownInterval) {
         clearInterval(scoreCountdownInterval)
@@ -2058,12 +2069,13 @@ async function updateCameraSelector(activeDeviceId = null) {
 
 // ==========================================
 // ระบบวิเคราะห์โครงสร้างมือ (MediaPipe Hands)
+// ==========================================
 function initHandsModel() {
-    return;
+    return; // ปิดระบบตรวจจับมือในโทรศัพท์/ไอแพด
 }
 
 function startHandTracking() {
-    return;
+    return; // ปิดระบบตรวจจับมือในโทรศัพท์/ไอแพด
 }
 
 function stopHandTracking() {
