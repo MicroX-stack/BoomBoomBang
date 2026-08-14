@@ -1225,10 +1225,7 @@ input:checked+.toggle-slider:before {
     position: relative;
 }
 
-#question-screen .game-half {
-    justify-content: flex-start;
-    padding: 2vh 0;
-}
+
 
 /* ผู้แพ้: รอก่อนนะ... (กระจกลอยทับเข้ม) */
 .p1-q-half,
@@ -2529,8 +2526,6 @@ input:checked+.toggle-slider:before {
 
 #question-screen {
     background: rgba(8, 15, 35, 0.22);
-    overflow-y: auto; /* อนุญาตให้เลื่อนขึ้นลงได้เฉพาะหน้านี้ */
-    -webkit-overflow-scrolling: touch; /* ให้เลื่อนสมูทบน iOS */
 }
 
 .wait-container {
@@ -3440,4 +3435,20 @@ input:checked+.toggle-slider:before {
 
 .btn-credits-back:active {
     transform: translateX(-50%) scale(0.95);
+}
+
+/* 
+   ==========================================
+   Mobile & iPad specific rules for Question Screen
+   ========================================== 
+*/
+@media (max-width: 1024px), (pointer: coarse) {
+    #question-screen {
+        overflow-y: auto; /* อนุญาตให้เลื่อนขึ้นลงได้เฉพาะหน้านี้ */
+        -webkit-overflow-scrolling: touch; /* ให้เลื่อนสมูทบน iOS */
+    }
+    #question-screen .game-half {
+        justify-content: flex-start;
+        padding: 2vh 0;
+    }
 }
