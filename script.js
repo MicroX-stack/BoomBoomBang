@@ -972,14 +972,16 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         const bongoP1 = document.querySelector('#p1-ice-block .bongo-drums-img');
         if (bongoP1) {
             bongoP1.classList.remove('bongo-hit-anim');
-            requestAnimationFrame(() => requestAnimationFrame(() => bongoP1.classList.add('bongo-hit-anim')));
+            void bongoP1.offsetWidth; // Trigger reflow
+            bongoP1.classList.add('bongo-hit-anim');
         }
     } else {
         playDrumSound(110) // กลองผู้เล่น 2 (โทนทุ้มต่ำกว่า)
         const bongoP2 = document.querySelector('#p2-ice-block .bongo-drums-img');
         if (bongoP2) {
             bongoP2.classList.remove('bongo-hit-anim');
-            requestAnimationFrame(() => requestAnimationFrame(() => bongoP2.classList.add('bongo-hit-anim')));
+            void bongoP2.offsetWidth; // Trigger reflow
+            bongoP2.classList.add('bongo-hit-anim');
         }
     }
     if (playerKey === 'p1') {
@@ -1013,13 +1015,15 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
 
         if (catContainer) {
             catContainer.classList.remove('drumming-left', 'drumming-right')
-            requestAnimationFrame(() => requestAnimationFrame(() => catContainer.classList.add(catSide)))
+            void catContainer.offsetWidth
+            catContainer.classList.add(catSide)
             setTimeout(() => catContainer.classList.remove('drumming-left', 'drumming-right'), 120)
         }
 
         if (p1IceBlock) {
             p1IceBlock.classList.remove('drum-hit-left', 'drum-hit-right')
-            requestAnimationFrame(() => requestAnimationFrame(() => p1IceBlock.classList.add(drumSide)))
+            void p1IceBlock.offsetWidth
+            p1IceBlock.classList.add(drumSide)
             setTimeout(() => p1IceBlock.classList.remove('drum-hit-left', 'drum-hit-right'), 100)
         }
 
@@ -1027,7 +1031,8 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         const p1BongoImg = p1IceBlock ? p1IceBlock.querySelector('.bongo-drums-img') : null
         if (p1BongoImg) {
             p1BongoImg.classList.remove('drum-hit')
-            requestAnimationFrame(() => requestAnimationFrame(() => p1BongoImg.classList.add('drum-hit')))
+            void p1BongoImg.offsetWidth
+            p1BongoImg.classList.add('drum-hit')
             setTimeout(() => {
                 p1BongoImg.classList.remove('drum-hit')
             }, 200)
@@ -1083,7 +1088,8 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
 
         if (p2IceBlock) {
             p2IceBlock.classList.remove('drum-hit-left', 'drum-hit-right')
-            requestAnimationFrame(() => requestAnimationFrame(() => p2IceBlock.classList.add(drumSide)))
+            void p2IceBlock.offsetWidth
+            p2IceBlock.classList.add(drumSide)
             setTimeout(() => p2IceBlock.classList.remove('drum-hit-left', 'drum-hit-right'), 100)
         }
 
@@ -1091,7 +1097,8 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         const p2BongoImg = p2IceBlock ? p2IceBlock.querySelector('.bongo-drums-img') : null
         if (p2BongoImg) {
             p2BongoImg.classList.remove('drum-hit')
-            requestAnimationFrame(() => requestAnimationFrame(() => p2BongoImg.classList.add('drum-hit')))
+            void p2BongoImg.offsetWidth
+            p2BongoImg.classList.add('drum-hit')
             setTimeout(() => {
                 p2BongoImg.classList.remove('drum-hit')
             }, 200)
