@@ -731,8 +731,8 @@ input:checked+.toggle-slider:before {
     transform: translate(-50%, -50%);
     display: flex;
     z-index: 10;
-    width: 80vw;
-    max-width: 1200px;
+    width: 95vw;
+    max-width: 1400px;
     justify-content: center;
     align-items: center;
 }
@@ -758,8 +758,8 @@ input:checked+.toggle-slider:before {
     position: absolute;
     top: 2%;
     left: 0%;
-    width: 40vw;
-    max-width: 700px;
+    width: 50vw;
+    max-width: 800px;
     z-index: 5;
     filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
     animation: floatingTitle 3s ease-in-out infinite;
