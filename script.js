@@ -2132,14 +2132,7 @@ async function processVideoFrame() {
         return
     }
     
-    // Limit to ~20 FPS (50ms) to prevent thermal throttling and freezing on Macbook
-    const now = Date.now()
-    if (now - lastFrameTime < 50) {
-        requestAnimationFrame(processVideoFrame)
-        return
-    }
-    lastFrameTime = now
-
+    // นำการจำกัด FPS ออกเพื่อให้การตรวจจับมือและขยับพอยน์เตอร์ลื่นไหลและรวดเร็วที่สุด
     try {
         await handsModel.send({ image: video })
     } catch (err) {
@@ -2168,9 +2161,8 @@ function onHandResults(results) {
             // ใช้พิกัดข้อมือ (landmarks[0].x) แทนค่าเฉลี่ย เพื่อความแม่นยำและป้องกันนิ้วล้ำเส้น
             const wristX = landmarks[0].x
             
-            // สร้าง Dead Zone ตรงกลางจอ (0.45 - 0.55) ถ้ายื่นข้อมือล้ำเข้ามาตรงกลาง ให้ไม่นับมือนี้เลย
-            // เพื่อป้องกันบั๊กมือข้ามจอแล้วไปช่วยฝั่งตรงข้ามตีกลองรัวๆ จนเกมจบ (ค้าง)
-            if (wristX > 0.45 && wristX < 0.55) {
+            // สร้าง Dead Zone ตรงกลางจอ (0.45 - 0.55) เฉพาะในหน้าเล่นเกม เพื่อป้องกันการรัวข้ามจอ
+            if (currentScreen === 'game-screen' && wristX > 0.45 && wristX < 0.55) {
                 continue
             }
 
@@ -2231,20 +2223,10 @@ function onHandResults(results) {
 
             // ดึงข้อมูลมือที่จะควบคุมชี้คำตอบ:
             let winnerHand = null
-            if (currentScreen === 'final-screen') {
-                if (results.multiHandLandmarks.length > 0) {
-                    winnerHand = results.multiHandLandmarks[0]
-                }
-            } else {
-                // ดึงมือจากฝั่งผู้ชนะโดยตรง (ซึ่งถูกเรียงลำดับไว้แล้ว ป้องกันมือสลับกันเวลามีหลายมือ)
-                if (winner === 'p1' && p1HandsList.length > 0) {
-                    winnerHand = p1HandsList[0]
-                } else if (winner === 'p2' && p2HandsList.length > 0) {
-                    winnerHand = p2HandsList[0]
-                }
-
-                // ลบ Fallback ที่ยอมให้ฝั่งแพ้คุมพอยน์เตอร์ได้ทิ้งไป 
-                // เพื่อให้มั่นใจว่า "เฉพาะ" คนที่ชนะตีกลองเท่านั้นที่จะได้คุมพอยน์เตอร์และตอบคำถาม
+            // ในหน้าตอบคำถามหรือหน้าจบ ให้รับค่าจากมือแรกที่เจอเลย
+            // เพื่อป้องกันเวลามือผู้ชนะยื่นข้ามเส้นกลางจอแล้วข้อมือสลับฝั่ง หรือตกไปอยู่ใน Dead Zone
+            if (results.multiHandLandmarks.length > 0) {
+                winnerHand = results.multiHandLandmarks[0]
             }
 
             if (winnerHand) {
