@@ -631,7 +631,7 @@ function setScreen(screenName) {
     // ซ่อนหรือแสดงกล้องตามหน้าจอเพื่อแยกกันให้ชัดเจน ไม่ให้ทับซ้อนกันในหน้าแรก
     const cameraBg = document.getElementById('camera-bg-container')
     if (cameraBg) {
-        if (!isMobile && (screenName === 'game-screen' || screenName === 'question-screen' || screenName === 'score-screen' || screenName === 'final-screen')) {
+        if (screenName === 'game-screen' || screenName === 'question-screen' || screenName === 'score-screen' || screenName === 'final-screen') {
             cameraBg.style.display = 'block'
         } else {
             cameraBg.style.display = 'none'
@@ -833,7 +833,7 @@ function _internalStartGameScreen() {
     setScreen('game-screen')
 
     // โหลด/เปิดกล้องเว็บแคมหลังจากผ่านหน้านับถอยหลังแล้ว
-    if (!mediaStream && !isMobile) {
+    if (!mediaStream) {
         startWebcam().catch(e => {
             console.error("ไม่สามารถเริ่มกล้องเว็บแคมได้:", e)
         })
@@ -1338,7 +1338,7 @@ function buildQuestionVisualHTML() {
 
 function buildAnswerButtonsHTML() {
     return shuffledOptions.map((opt, index) => `
-        <button class="option-btn hover-target" data-hover-key="${opt.key}">
+        <button class="option-btn hover-target" data-hover-key="${opt.key}" onclick="if(!isQuestionFinished) selectOption('${opt.key}')">
             <span class="btn-label">${String.fromCharCode(65 + index)}</span>
             <span class="btn-text">${opt.text}</span>
             <div class="progress-fill"></div>
@@ -1980,7 +1980,6 @@ function stopCurrentStream() {
 }
 
 function startWebcam(targetDeviceId = null) {
-    if (isMobile) return;
     return new Promise(async (resolve, reject) => {
         stopCurrentStream()
 
@@ -2070,7 +2069,6 @@ async function updateCameraSelector(activeDeviceId = null) {
 // ระบบวิเคราะห์โครงสร้างมือ (MediaPipe Hands)
 // ==========================================
 function initHandsModel() {
-    if (isMobile) return;
     if (handsModel) return
 
     if (typeof Hands === 'undefined') {
@@ -2099,7 +2097,6 @@ function initHandsModel() {
 }
 
 function startHandTracking() {
-    if (isMobile) return;
     if (!handsModel) {
         initHandsModel()
     }

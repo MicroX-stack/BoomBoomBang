@@ -726,9 +726,9 @@ input:checked+.toggle-slider:before {
 
 .category-buttons-row {
     position: absolute;
-    bottom: 30%;
+    top: 55%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     display: flex;
     z-index: 10;
     width: 80vw;
