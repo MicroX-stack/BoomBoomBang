@@ -3446,9 +3446,16 @@ input:checked+.toggle-slider:before {
     #question-screen {
         overflow-y: auto; /* อนุญาตให้เลื่อนขึ้นลงได้เฉพาะหน้านี้ */
         -webkit-overflow-scrolling: touch; /* ให้เลื่อนสมูทบน iOS */
+        align-items: flex-start; /* สำคัญมาก: เพื่อให้เนื้อหาเริ่มจากบนและขยายลงล่าง */
     }
     #question-screen .game-half {
         justify-content: flex-start;
         padding: 2vh 0;
+        height: auto; /* ยอมให้กล่องขยายตามความยาวของคำถามและช้อยส์ */
+        min-height: 100%;
+    }
+    .winner-active-box {
+        height: auto; /* ลบล้าง height: 100% เดิม เพื่อให้ยืดตามเนื้อหา */
+        min-height: 100%;
     }
 }
