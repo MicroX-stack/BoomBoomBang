@@ -29,8 +29,11 @@ body {
     overflow: hidden;
     height: 100%;
     width: 100%;
-    touch-action: none; /* ป้องกันการเลื่อนหน้าจอ (Scrolling) บนมือถือและไอแพด */
-    position: fixed; /* ป้องกันยางยืด (Bounce effect) บน iOS */
+}
+
+/* ล็อคเฉพาะหน้าเกมไม่ให้เลื่อน ป้องกันการลากพลาดตอนตีกลอง */
+#game-screen, #start-screen, #category-screen {
+    touch-action: none;
 }
 
 body {
@@ -2521,6 +2524,8 @@ input:checked+.toggle-slider:before {
 
 #question-screen {
     background: rgba(8, 15, 35, 0.22);
+    overflow-y: auto; /* อนุญาตให้เลื่อนขึ้นลงได้เฉพาะหน้านี้ */
+    -webkit-overflow-scrolling: touch; /* ให้เลื่อนสมูทบน iOS */
 }
 
 .wait-container {
@@ -2544,6 +2549,7 @@ input:checked+.toggle-slider:before {
     gap: 12px;
     padding: 15px 20px 20px;
     overflow: auto;
+    -webkit-overflow-scrolling: touch; /* เพิ่มให้ iOS ปัดขึ้นลงได้ลื่นไหล */
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 247, 255, 0.94));
 }
 
