@@ -3447,33 +3447,29 @@ input:checked+.toggle-slider:before {
    Mobile native page scrolling for Question Screen
    ========================================== */
 @media (max-width: 1024px), (pointer: coarse) {
-    html.allow-scroll,
-    body.allow-scroll {
-        position: relative !important;
-        touch-action: auto !important;
-        overflow-y: auto !important;
-        height: auto !important;
-        min-height: 100vh;
+    /* วิธีที่ชัวร์ที่สุดบน iOS: ให้ตัว container ของ question-screen มันเลื่อนได้เองเลย */
+    #question-screen {
+        overflow-y: scroll !important;
         -webkit-overflow-scrolling: touch !important;
+        align-items: flex-start !important; /* ป้องกันบัค Flexbox ซ่อนเนื้อหาด้านบน */
+        /* ไม่ต้องแก้ position, ปล่อยให้เป็น absolute 100% ตาม .screen */
+        display: flex !important;
     }
-    html.allow-scroll #app,
-    body.allow-scroll #app {
+    
+    #question-screen .game-half {
         height: auto !important;
-        min-height: 100vh;
-        overflow: visible !important;
+        min-height: 100% !important;
+        justify-content: flex-start !important;
+        padding-top: 5vh !important;
+        padding-bottom: 10vh !important;
     }
-    body.allow-scroll #question-screen {
-        position: relative !important;
-        height: auto !important;
-        min-height: 100vh;
-        overflow: visible !important;
-    }
-    body.allow-scroll #question-screen .game-half {
-        height: auto !important;
-        min-height: 100vh;
-    }
-    body.allow-scroll .winner-active-box {
+    
+    .winner-active-box {
         height: auto !important;
         overflow: visible !important;
+    }
+    
+    #question-divider {
+        position: fixed !important;
     }
 }
