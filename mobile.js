@@ -705,6 +705,8 @@ let lastBoomTime = 0
 let currentDrumSource = null
 let drumStopTimer = null
 
+const fallbackDrumAudio = new Audio('Effect/boom.mp3');
+
 function playDrumSound(pitch = 140) {
     const now = Date.now()
     if (now - lastBoomTime < 100) return // กันเสียงรั่ว
@@ -714,7 +716,7 @@ function playDrumSound(pitch = 140) {
         audioCtx.resume();
     }
     
-    if (audioCtx && audioBuffers['boom']) {
+    if (audioCtx && audioBuffers['boom'] && audioCtx.state === 'running') {
         // ตัดหางเสียงเก่าทิ้งทันทีเมื่อตีใหม่ (เหมือน currentTime = 0)
         if (currentDrumSource) {
             try {
@@ -743,6 +745,10 @@ function playDrumSound(pitch = 140) {
                 } catch(e) {}
             }
         }, 250) // ถ้าหยุดตีเกิน 0.25 วินาที ให้ตัดเสียงเลย
+    } else {
+        // Fallback ไปใช้ระบบเสียงธรรมดาถ้าระบบ Web Audio โดนบล็อกใน iOS
+        fallbackDrumAudio.currentTime = 0;
+        fallbackDrumAudio.play().catch(e => {});
     }
 }
 
