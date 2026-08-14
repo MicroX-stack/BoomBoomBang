@@ -22,20 +22,49 @@
     padding: 0;
     user-select: none;
     -webkit-user-select: none;
-    touch-action: none;
 }
 
 html,
 body {
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     height: 100%;
     width: 100%;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
 }
 
 body {
     font-family: var(--font-family);
     color: var(--text-dark);
     background-color: #000;
+}
+
+#game-screen,
+#start-screen,
+#category-screen,
+#countdown-screen,
+#level-transition-screen,
+#score-screen,
+#final-screen,
+#settings-screen,
+#credits-screen {
+    touch-action: none;
+}
+
+#question-screen {
+    touch-action: pan-y;
+}
+
+#question-screen.active {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    height: auto !important;
+    min-height: 100%;
+}
+
+#question-screen .game-half {
+    touch-action: pan-y;
 }
 
 /* ==========================================
@@ -604,8 +633,7 @@ input:checked+.toggle-slider {
     background-color: var(--primary-green);
 }
 
-input:checked+.toggle-slider:before {
-}
+input:checked+.toggle-slider:before {}
 
 /* Scoreboard */
 .scoreboard-container {
@@ -714,7 +742,7 @@ input:checked+.toggle-slider:before {
     width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
 }
 
 .btn-category-back:hover {
@@ -752,7 +780,7 @@ input:checked+.toggle-slider:before {
     width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5));
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.5));
 }
 
 .category-title-img {
@@ -762,13 +790,20 @@ input:checked+.toggle-slider:before {
     width: 50vw;
     max-width: 800px;
     z-index: 5;
-    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.4));
     animation: floatingTitle 3s ease-in-out infinite;
 }
 
 @keyframes floatingTitle {
-    0%, 100% { transform: translateY(0) rotate(-2deg); }
-    50% { transform: translateY(-5px) rotate(-1deg); }
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(-2deg);
+    }
+
+    50% {
+        transform: translateY(-5px) rotate(-1deg);
+    }
 }
 
 .category-img-btn:hover {
@@ -866,7 +901,8 @@ input:checked+.toggle-slider:before {
     top: 0;
     bottom: 0;
     height: 100%;
-    transition: width 0.08s ease-out; /* ลดเวลา transition เพื่อให้หลอดเลือดกระตุกไปมาเวลายื้อกัน */
+    transition: width 0.08s ease-out;
+    /* ลดเวลา transition เพื่อให้หลอดเลือดกระตุกไปมาเวลายื้อกัน */
 }
 
 .p1-portion {
@@ -1214,11 +1250,14 @@ input:checked+.toggle-slider:before {
 .game-half {
     flex: 1;
     height: 100%;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     position: relative;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* ผู้แพ้: รอก่อนนะ... (กระจกลอยทับเข้ม) */
@@ -1255,15 +1294,15 @@ input:checked+.toggle-slider:before {
 /* ผู้ชนะ: ส่วนแสดงคำถาม (กระจกลอยทับขาว) */
 .winner-active-box {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 40px;
+    display: block;
+    padding: 24px 16px 40px;
+    text-align: center;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
 }
 
 .question-header {
@@ -1353,6 +1392,7 @@ input:checked+.toggle-slider:before {
     z-index: 50;
     background-color: #eafaf1;
 }
+
 .option-btn.correct-choice::after {
     content: '✅';
     position: absolute;
@@ -1363,9 +1403,10 @@ input:checked+.toggle-slider:before {
     height: 40px;
     line-height: 40px;
     font-size: 2.5rem;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
 .option-btn.wrong-choice {
     border: 6px solid #e74c3c;
     box-shadow: 0 0 20px #e74c3c;
@@ -1373,6 +1414,7 @@ input:checked+.toggle-slider:before {
     z-index: 50;
     background-color: #fdedec;
 }
+
 .option-btn.wrong-choice::after {
     content: '❌';
     position: absolute;
@@ -1383,14 +1425,22 @@ input:checked+.toggle-slider:before {
     height: 40px;
     line-height: 40px;
     font-size: 2.5rem;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @keyframes popIn {
-    0% { transform: scale(0); }
-    80% { transform: scale(1.2); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(0);
+    }
+
+    80% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 .no-image-spacer {
@@ -1505,7 +1555,7 @@ input:checked+.toggle-slider:before {
     padding: 20px 40px;
     border-radius: 30px;
     background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     pointer-events: none;
     display: flex;
     flex-direction: column;
@@ -1613,16 +1663,19 @@ input:checked+.toggle-slider:before {
         opacity: 1;
         filter: brightness(1) drop-shadow(0 0 0px red);
     }
+
     15% {
         transform: scale(2) rotate(15deg);
         opacity: 1;
         filter: brightness(2) drop-shadow(0 0 50px red);
     }
+
     30% {
         transform: scale(1.5) rotate(-15deg);
         opacity: 1;
         filter: brightness(1.5) drop-shadow(0 0 80px orange);
     }
+
     100% {
         transform: scale(0) rotate(45deg);
         opacity: 0;
@@ -2158,7 +2211,8 @@ input:checked+.toggle-slider:before {
     top: -32px;
     object-fit: contain;
     z-index: 10;
-    transition: all 0.08s ease-out; /* ลดเวลา transition เพื่อให้รูปแมวกระตุกไปมาตอนชนกัน */
+    transition: all 0.08s ease-out;
+    /* ลดเวลา transition เพื่อให้รูปแมวกระตุกไปมาตอนชนกัน */
     filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
     background: transparent !important;
     border: none !important;
@@ -2818,17 +2872,15 @@ input:checked+.toggle-slider:before {
     height: 38px;
     transform: translate(-50%, -50%);
     border-radius: 50%;
-    background: conic-gradient(
-        #fff var(--progress, 0%), 
-        transparent 0
-    );
+    background: conic-gradient(#fff var(--progress, 0%),
+            transparent 0);
     -webkit-mask: radial-gradient(transparent 58%, black 60%);
     mask: radial-gradient(transparent 58%, black 60%);
     opacity: 0;
     transition: opacity 0.2s;
     pointer-events: none;
     z-index: 11;
-    filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
 }
 
 .jigsaw-square.hovering::before,
@@ -3037,53 +3089,66 @@ input:checked+.toggle-slider:before {
 
 .home-logo {
     position: absolute;
-    top: 2%;
+    top: 5%;
     left: 50%;
     transform: translateX(-50%);
-    width: 75%;
-    max-width: 1400px;
-    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+    width: 62%;
+    max-width: 1100px;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
     z-index: 10;
 }
 
 @keyframes floatLogo {
-    0%, 100% { transform: translate(-50%, 0) rotate(-2deg); }
-    50% { transform: translate(-50%, -15px) rotate(2deg); }
+
+    0%,
+    100% {
+        transform: translate(-50%, 0) rotate(-1deg);
+    }
+
+    50% {
+        transform: translate(-50%, -10px) rotate(1deg);
+    }
 }
 
 .home-cat {
     position: absolute;
-    bottom: -1%;
-    left: 2%;
-    width: 52%;
-    max-width: 1000px;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+    bottom: 2%;
+    left: 1%;
+    width: 46%;
+    max-width: 820px;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
     transform-origin: bottom center;
     animation: drumCat 0.5s infinite alternate;
     z-index: 15;
 }
 
 @keyframes drumCat {
-    0% { transform: scaleY(1) rotate(-1deg); }
-    100% { transform: scaleY(0.96) rotate(1deg); }
+    0% {
+        transform: scaleY(1) rotate(-1deg);
+    }
+
+    100% {
+        transform: scaleY(0.96) rotate(1deg);
+    }
 }
 
 .home-buttons-wrapper {
     position: absolute;
-    top: 62%;
-    left: 62%;
-    transform: translate(-50%, -50%);
-    width: 40vw;
-    max-width: 700px;
+    top: 58%;
+    right: 4%;
+    transform: translateY(-50%);
+    left: auto;
+    width: 34vw;
+    max-width: 520px;
     z-index: 20;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    gap: 22px;
 }
 
 .home-btn-img-wrapper:nth-child(2) {
-    margin-top: -35%; /* Bring them very close together */
+    margin-top: 0;
 }
 
 .home-btn-img-wrapper {
@@ -3112,13 +3177,8 @@ input:checked+.toggle-slider:before {
     width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.home-btn-img-wrapper:first-child .home-btn-img,
-.home-btn-img-wrapper:first-child .invisible-overlay-btn {
-    clip-path: inset(0 10% 15% 0);
 }
 
 .home-btn-img-wrapper:has(.invisible-overlay-btn:hover) .home-btn-img {
@@ -3129,12 +3189,20 @@ input:checked+.toggle-slider:before {
     transform: scale(0.95);
 }
 
-@media (min-width: 1600px) {
-}
+@media (min-width: 1600px) {}
 
 @media (max-width: 900px) {
     .home-buttons-wrapper {
-        width: 40vw;
+        width: 42vw;
+        gap: 14px;
+    }
+
+    .home-logo {
+        width: 72%;
+    }
+
+    .home-cat {
+        width: 50%;
     }
 }
 
@@ -3195,7 +3263,7 @@ input:checked+.toggle-slider:before {
     width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
 }
 
 .btn-settings-back:hover {
@@ -3229,7 +3297,7 @@ input:checked+.toggle-slider:before {
     width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
 }
 
 .btn-settings-nav:hover {
@@ -3249,23 +3317,51 @@ input:checked+.toggle-slider:before {
    and prevent vertical overlapping!
 */
 @media (min-aspect-ratio: 161/100) {
-    .home-logo { width: 120vh !important; }
-    .home-cat { width: 83.2vh !important; }
-    .home-buttons-wrapper { width: 64vh !important; }
-    
-    .category-title-img { width: 64vh !important; }
-    .category-buttons-row { width: 128vh !important; }
-    .btn-category-back { width: 16vh !important; }
-    
-    /* On 16:10, margin was 0 -2.5vw. Convert to vh: -2.5 * 1.6 = -4vh */
-    .category-img-btn { margin: 0 -4vh !important; }
+    .home-logo {
+        width: 92vh !important;
+    }
+
+    .home-cat {
+        width: 70vh !important;
+    }
+
+    .home-buttons-wrapper {
+        width: 50vh !important;
+        gap: 16px !important;
+    }
+
+    .category-title-img {
+        width: 64vh !important;
+    }
+
+    .category-buttons-row {
+        width: 128vh !important;
+    }
+
+    .btn-category-back {
+        width: 16vh !important;
+    }
+
+    .category-img-btn {
+        margin: 0 -4vh !important;
+    }
 }
+
 /* Bongo Hit Animation */
 @keyframes bongo-hit {
-    0% { transform: scale(1) translateY(0); }
-    50% { transform: scale(0.95) translateY(10px); }
-    100% { transform: scale(1) translateY(0); }
+    0% {
+        transform: scale(1) translateY(0);
+    }
+
+    50% {
+        transform: scale(0.95) translateY(10px);
+    }
+
+    100% {
+        transform: scale(1) translateY(0);
+    }
 }
+
 .bongo-hit-anim {
     animation: bongo-hit 0.1s ease-out;
 }
@@ -3287,10 +3383,12 @@ input:checked+.toggle-slider:before {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* Ensure it is on top of everything */
+    z-index: 9999;
+    /* Ensure it is on top of everything */
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.1s ease; /* ขึ้นทันที (เร็วขึ้นมาก) */
+    transition: opacity 0.1s ease;
+    /* ขึ้นทันที (เร็วขึ้นมาก) */
 }
 
 #level-transition-screen.active {
@@ -3311,7 +3409,7 @@ input:checked+.toggle-slider:before {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5));
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.5));
     transform: scale(0);
 }
 
@@ -3320,12 +3418,33 @@ input:checked+.toggle-slider:before {
 }
 
 @keyframes levelBounce {
-    0% { transform: scale(0) rotate(-15deg); opacity: 0; }
-    20% { transform: scale(1.1) rotate(5deg); opacity: 1; }
-    40% { transform: scale(0.95) rotate(-3deg); }
-    60% { transform: scale(1.02) rotate(2deg); }
-    80% { transform: scale(1) rotate(0deg); opacity: 1; }
-    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    0% {
+        transform: scale(0) rotate(-15deg);
+        opacity: 0;
+    }
+
+    20% {
+        transform: scale(1.1) rotate(5deg);
+        opacity: 1;
+    }
+
+    40% {
+        transform: scale(0.95) rotate(-3deg);
+    }
+
+    60% {
+        transform: scale(1.02) rotate(2deg);
+    }
+
+    80% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
 }
 
 /* ==========================================
@@ -3350,7 +3469,7 @@ input:checked+.toggle-slider:before {
     width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
 }
 
 .hw-corner-btn:hover {
@@ -3400,7 +3519,7 @@ input:checked+.toggle-slider:before {
     width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
 }
 
 .btn-credits-back:hover {
@@ -3409,4 +3528,36 @@ input:checked+.toggle-slider:before {
 
 .btn-credits-back:active {
     transform: translateX(-50%) scale(0.95);
+}
+
+/* ==========================================
+   Mobile Question Screen Scrolling Fix
+   ========================================== */
+body.allow-scroll {
+    touch-action: auto !important;
+    position: relative !important;
+}
+
+#question-screen {
+    overflow-y: scroll !important;
+    -webkit-overflow-scrolling: touch !important;
+    align-items: flex-start !important;
+    display: flex !important;
+}
+
+#question-screen .game-half {
+    height: auto !important;
+    min-height: 100% !important;
+    justify-content: flex-start !important;
+    padding-top: 5vh !important;
+    padding-bottom: 10vh !important;
+}
+
+.winner-active-box {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+#question-divider {
+    position: fixed !important;
 }

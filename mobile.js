@@ -37,12 +37,12 @@ bgmFinal.preload = "auto"
 
 // Mobile Touch Detection
 function isMobileDevice() {
-    return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1) || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1) || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
-const isMobile = isMobileDevice();
+const isMobile = isMobileDevice()
 
-let audioCtx = null;
-const audioBuffers = {};
+let audioCtx = null
+const audioBuffers = {}
 const sfxVolumes = {
     'boom': 1.0,
     'button-click': 1.0, // เพิ่มความดังของปุ่ม
@@ -53,59 +53,59 @@ const sfxVolumes = {
     'pop': 1.0,
     'correct': 1.0,
     'leveleffect': 1.0
-};
+}
 
 // ใช้เป็น string ID แทน Audio Object เดิม
-const sfxBoom = 'boom';
-const sfxButton = 'button-click';
-const sfxInterface = 'interface-click-';
-const sfxVineBoom = 'vine-boom';
-const sfxAnswer = 'answer';
-const sfxError = 'error';
-const sfxPop = 'pop';
-const sfxCorrect = 'correct';
-const sfxLevelEffect = 'leveleffect';
+const sfxBoom = 'boom'
+const sfxButton = 'button-click'
+const sfxInterface = 'interface-click-'
+const sfxVineBoom = 'vine-boom'
+const sfxAnswer = 'answer'
+const sfxError = 'error'
+const sfxPop = 'pop'
+const sfxCorrect = 'correct'
+const sfxLevelEffect = 'leveleffect'
 
 function initAudioContext() {
-    if (audioCtx) return;
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
+    if (audioCtx) return
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+
     // โหลดเสียงทั้งหมดล่วงหน้าเข้า RAM เพื่อให้เล่นได้ทันที (ไม่มีดีเลย์)
     Object.keys(sfxVolumes).forEach(name => {
         fetch(`Effect/${name}.mp3`)
             .then(res => res.arrayBuffer())
             .then(data => audioCtx.decodeAudioData(data))
             .then(buffer => {
-                audioBuffers[name] = buffer;
+                audioBuffers[name] = buffer
             })
-            .catch(e => console.error("Error loading", name, e));
-    });
+            .catch(e => console.error("Error loading", name, e))
+    })
 }
 
 // ปลดล็อก AudioContext เฉพาะตอนผู้ใช้คลิกหรือแตะหน้าจอครั้งแรก (ห้าม load ทันทีใน iOS)
 const unlockAudio = () => {
-    if (!audioCtx) initAudioContext();
+    if (!audioCtx) initAudioContext()
     if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
+        audioCtx.resume()
     }
-};
-document.addEventListener('click', unlockAudio, { once: true });
-document.addEventListener('touchstart', unlockAudio, { once: true });
+}
+document.addEventListener('click', unlockAudio, { once: true })
+document.addEventListener('touchstart', unlockAudio, { once: true })
 
 function playSFX(audioName) {
     if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
+        audioCtx.resume()
     }
     if (audioCtx && audioBuffers[audioName]) {
-        const source = audioCtx.createBufferSource();
-        source.buffer = audioBuffers[audioName];
-        
-        const gainNode = audioCtx.createGain();
-        gainNode.gain.value = sfxVolumes[audioName] || 1.0;
-        
-        source.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        source.start(0);
+        const source = audioCtx.createBufferSource()
+        source.buffer = audioBuffers[audioName]
+
+        const gainNode = audioCtx.createGain()
+        gainNode.gain.value = sfxVolumes[audioName] || 1.0
+
+        source.connect(gainNode)
+        gainNode.connect(audioCtx.destination)
+        source.start(0)
     }
 }
 
@@ -119,33 +119,33 @@ document.addEventListener('click', (e) => {
 
 // เพิ่มเสียง pop เมื่อเอาเมาส์ชี้กล่องเริ่มเกม, ตั้งค่า, และหมวดหมู่
 document.addEventListener('DOMContentLoaded', () => {
-    const gameScreenEl = document.getElementById('game-screen');
+    const gameScreenEl = document.getElementById('game-screen')
     if (gameScreenEl) {
         gameScreenEl.addEventListener('touchstart', (e) => {
-        if (!isMobile || currentScreen !== 'game-screen' || isGameOver) return;
-        e.preventDefault(); // ป้องกันเบราว์เซอร์ซูมหรือเลื่อนจอเวลาตีกลองรัวๆ
-        
-        for (let i = 0; i < e.changedTouches.length; i++) {
-            const touch = e.changedTouches[i];
-            const x = touch.clientX;
-            const y = touch.clientY;
-            const now = Date.now();
-            
-            if (x < window.innerWidth / 2) {
-                // Player 1
-                if (now - (window.lastP1TouchSmash || 0) > SMASH_COOLDOWN) {
-                    window.lastP1TouchSmash = now;
-                    triggerSmash('p1', x, y, {x: x/window.innerWidth, y: y/window.innerHeight});
-                }
-            } else {
-                // Player 2
-                if (now - (window.lastP2TouchSmash || 0) > SMASH_COOLDOWN) {
-                    window.lastP2TouchSmash = now;
-                    triggerSmash('p2', x, y, {x: x/window.innerWidth, y: y/window.innerHeight});
+            if (!isMobile || currentScreen !== 'game-screen' || isGameOver) return
+            e.preventDefault() // ป้องกันเบราว์เซอร์ซูมหรือเลื่อนจอเวลาตีกลองรัวๆ
+
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                const touch = e.changedTouches[i]
+                const x = touch.clientX
+                const y = touch.clientY
+                const now = Date.now()
+
+                if (x < window.innerWidth / 2) {
+                    // Player 1
+                    if (now - (window.lastP1TouchSmash || 0) > SMASH_COOLDOWN) {
+                        window.lastP1TouchSmash = now
+                        triggerSmash('p1', x, y, { x: x / window.innerWidth, y: y / window.innerHeight })
+                    }
+                } else {
+                    // Player 2
+                    if (now - (window.lastP2TouchSmash || 0) > SMASH_COOLDOWN) {
+                        window.lastP2TouchSmash = now
+                        triggerSmash('p2', x, y, { x: x / window.innerWidth, y: y / window.innerHeight })
+                    }
                 }
             }
-        }
-        });
+        })
     }
 })
 
@@ -205,6 +205,40 @@ const p1IceBlock = document.getElementById('p1-ice-block')
 const p2IceBlock = document.getElementById('p2-ice-block')
 const p1HpFill = document.getElementById('p1-hp-fill')
 const p2HpFill = document.getElementById('p2-hp-fill')
+
+// ========= Mobile Tap-to-Play: Direct tap on drum blocks (fallback + explicit) =========
+if (isMobile) {
+    if (p1IceBlock) {
+        const p1Tap = (e) => {
+            if (currentScreen !== 'game-screen' || isGameOver) return
+            const now = Date.now()
+            if (now - (window.lastP1TouchSmash || 0) > SMASH_COOLDOWN) {
+                window.lastP1TouchSmash = now
+                const rect = p1IceBlock.getBoundingClientRect()
+                const x = rect.left + rect.width / 2
+                const y = rect.top + rect.height / 2
+                triggerSmash('p1', x, y, { x: 0.25, y: 0.75 })
+            }
+        }
+        p1IceBlock.addEventListener('touchstart', (e) => { e.preventDefault(); p1Tap(e) }, { passive: false })
+        p1IceBlock.addEventListener('click', p1Tap)
+    }
+    if (p2IceBlock) {
+        const p2Tap = (e) => {
+            if (currentScreen !== 'game-screen' || isGameOver) return
+            const now = Date.now()
+            if (now - (window.lastP2TouchSmash || 0) > SMASH_COOLDOWN) {
+                window.lastP2TouchSmash = now
+                const rect = p2IceBlock.getBoundingClientRect()
+                const x = rect.left + rect.width / 2
+                const y = rect.top + rect.height / 2
+                triggerSmash('p2', x, y, { x: 0.75, y: 0.75 })
+            }
+        }
+        p2IceBlock.addEventListener('touchstart', (e) => { e.preventDefault(); p2Tap(e) }, { passive: false })
+        p2IceBlock.addEventListener('click', p2Tap)
+    }
+}
 
 // อิลิเมนต์หน้าต่างตอบคำถามและพอยน์เตอร์
 const p1QuestionContainer = document.getElementById('p1-question-container')
@@ -405,7 +439,7 @@ function shuffleQuestionsForLevel(questions, categoryKey, level, avoidFirstQuest
             const correctText = q.options['A']
             const otherQuestions = questions.filter(other => other.options['A'] !== correctText)
             const randomWrong = shuffleArray(otherQuestions)
-            
+
             let wrong1 = randomWrong.length > 0 ? randomWrong[0].options['A'] : q.options['B']
             let wrong2 = randomWrong.length > 1 ? randomWrong[1].options['A'] : q.options['C']
 
@@ -445,12 +479,12 @@ function buildQuestionPools(categoryKey, resetBonus = true) {
         let shuffledBonus = shuffleArray(
             category.bonus.map((q, index) => {
                 const correctText = q.options['A']
-                
+
                 // ดึงตัวเลือกผิดแบบสุ่มจากทุก Level ของหมวดหมู่นี้ เพื่อไม่ให้คำตอบวนอยู่แค่ 3 ตัวเดิม!
                 const allCategoryQuestions = [...category.level1, ...category.level2, ...category.level3, ...category.bonus]
                 const otherQuestions = allCategoryQuestions.filter(other => other.options['A'] !== correctText)
                 const randomWrong = shuffleArray(otherQuestions)
-                
+
                 let wrong1 = randomWrong.length > 0 ? randomWrong[0].options['A'] : q.options['B']
                 let wrong2 = randomWrong.length > 1 ? randomWrong[1].options['A'] : q.options['C']
 
@@ -465,7 +499,7 @@ function buildQuestionPools(categoryKey, resetBonus = true) {
         )
 
         const lastBonusIds = lastFirstQuestionByCategory[`${categoryKey}-bonus-ids`] || []
-        
+
         if (shuffledBonus.length >= 2 && lastBonusIds.length >= 2) {
             let attempts = 0
             while ((shuffledBonus[0].questionId === lastBonusIds[0] || shuffledBonus[1].questionId === lastBonusIds[1]) && attempts < 10) {
@@ -629,11 +663,11 @@ function setScreen(screenName) {
     })
 
     if (screenName === 'question-screen') {
-        document.documentElement.classList.add('allow-scroll');
-        document.body.classList.add('allow-scroll');
+        document.documentElement.classList.add('allow-scroll')
+        document.body.classList.add('allow-scroll')
     } else {
-        document.documentElement.classList.remove('allow-scroll');
-        document.body.classList.remove('allow-scroll');
+        document.documentElement.classList.remove('allow-scroll')
+        document.body.classList.remove('allow-scroll')
     }
 
     // คืนปุ่มเริ่มเล่นให้กดได้เมื่อย้อนกลับมาหน้าแรก
@@ -707,50 +741,50 @@ let lastBoomTime = 0
 let currentDrumSource = null
 let drumStopTimer = null
 
-const fallbackDrumAudio = new Audio('Effect/boom.mp3');
+const fallbackDrumAudio = new Audio('Effect/boom.mp3')
 
 function playDrumSound(pitch = 140) {
     const now = Date.now()
     if (now - lastBoomTime < 100) return // กันเสียงรั่ว
     lastBoomTime = now
-    
+
     if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume();
+        audioCtx.resume()
     }
-    
+
     if (audioCtx && audioBuffers['boom'] && audioCtx.state === 'running') {
         // ตัดหางเสียงเก่าทิ้งทันทีเมื่อตีใหม่ (เหมือน currentTime = 0)
         if (currentDrumSource) {
             try {
                 currentDrumSource.stop()
-            } catch(e) {}
+            } catch (e) { }
         }
-        
+
         const source = audioCtx.createBufferSource()
         source.buffer = audioBuffers['boom']
-        
+
         const gainNode = audioCtx.createGain()
         gainNode.gain.value = sfxVolumes['boom'] || 1.0
-        
+
         source.connect(gainNode)
         gainNode.connect(audioCtx.destination)
         source.start(0)
-        
+
         currentDrumSource = source
-        
+
         // ตัดหางเสียง (Echo) ทิ้ง ทันทีที่ผู้เล่นหยุดตี (เหมือนโค้ดเดิมเป๊ะๆ)
         if (drumStopTimer) clearTimeout(drumStopTimer)
         drumStopTimer = setTimeout(() => {
             if (currentDrumSource) {
                 try {
                     currentDrumSource.stop()
-                } catch(e) {}
+                } catch (e) { }
             }
         }, 250) // ถ้าหยุดตีเกิน 0.25 วินาที ให้ตัดเสียงเลย
     } else {
         // Fallback ไปใช้ระบบเสียงธรรมดาถ้าระบบ Web Audio โดนบล็อกใน iOS
-        fallbackDrumAudio.currentTime = 0;
-        fallbackDrumAudio.play().catch(e => {});
+        fallbackDrumAudio.currentTime = 0
+        fallbackDrumAudio.play().catch(e => { })
     }
 }
 
@@ -805,52 +839,52 @@ function startCountdown() {
 
 
 function showLevelTransition(level, callback) {
-    const transitionScreen = document.getElementById('level-transition-screen');
-    const transitionImg = document.getElementById('level-transition-img');
-    
-    transitionImg.src = `level/level${level}.png`;
-    
+    const transitionScreen = document.getElementById('level-transition-screen')
+    const transitionImg = document.getElementById('level-transition-img')
+
+    transitionImg.src = `level/level${level}.png`
+
     // Reset animation
-    transitionImg.style.animation = 'none';
-    void transitionImg.offsetWidth; 
-    transitionImg.style.animation = ''; // MUST clear inline style so CSS applies
-    
-    transitionScreen.classList.remove('hidden');
-    transitionScreen.classList.add('active');
-    
+    transitionImg.style.animation = 'none'
+    void transitionImg.offsetWidth
+    transitionImg.style.animation = '' // MUST clear inline style so CSS applies
+
+    transitionScreen.classList.remove('hidden')
+    transitionScreen.classList.add('active')
+
     // เล่นเสียง Effect ทันทีที่โชว์หน้าคั่น
-    playSFX(sfxLevelEffect);
-    
+    playSFX(sfxLevelEffect)
+
     setTimeout(() => {
-        transitionScreen.classList.remove('active');
+        transitionScreen.classList.remove('active')
         setTimeout(() => {
-            transitionScreen.classList.add('hidden');
-            callback();
-        }, 500); 
-    }, 3000); 
+            transitionScreen.classList.add('hidden')
+            callback()
+        }, 500)
+    }, 3000)
 }
 
 function startGameScreen() {
-    const nextQuestion = gameQuestionPool ? gameQuestionPool[gameQuestionIndex] : null;
-    const nextLevel = nextQuestion ? (nextQuestion.level || 1) : 1;
-    
+    const nextQuestion = gameQuestionPool ? gameQuestionPool[gameQuestionIndex] : null
+    const nextLevel = nextQuestion ? (nextQuestion.level || 1) : 1
+
     if (nextLevel !== lastPlayedLevel && nextLevel >= 1 && nextLevel <= 3) {
-        lastPlayedLevel = nextLevel;
-        
+        lastPlayedLevel = nextLevel
+
         // 1. ไปที่หน้าเกมเลย
-        _internalStartGameScreen();
-        
+        _internalStartGameScreen()
+
         // 2. ล็อกเกมไม่ให้ตีกลองได้ระหว่างขึ้นหน้าคั่น
-        isGameOver = true;
-        
+        isGameOver = true
+
         // 3. โชว์หน้าคั่นซ้อนทับหน้าเกม
         showLevelTransition(nextLevel, () => {
             // ปลดล็อกเกมเมื่อหน้าคั่นหายไป
-            isGameOver = false;
-        });
-        return;
+            isGameOver = false
+        })
+        return
     }
-    _internalStartGameScreen();
+    _internalStartGameScreen()
 }
 
 function _internalStartGameScreen() {
@@ -901,13 +935,13 @@ function updateGameScreenUI() {
     // Update rainbow HP bar portions
     const p1HpEl = document.getElementById('p1-hp-portion')
     const p2HpEl = document.getElementById('p2-hp-portion')
-    
+
     if (p1HpEl) {
-        p1HpEl.style.left = '0';
+        p1HpEl.style.left = '0'
         p1HpEl.style.width = `${p1HpPortion}%`
     }
     if (p2HpEl) {
-        p2HpEl.style.right = '0';
+        p2HpEl.style.right = '0'
         p2HpEl.style.width = `${p2HpPortion}%`
     }
 
@@ -931,7 +965,7 @@ function updateGameScreenUI() {
 
     if (p1ProgressCat) {
         // P1 cat is at the end of P1's bar
-        p1ProgressCat.style.left = `calc(${p1HpPortion}% - 60px)` 
+        p1ProgressCat.style.left = `calc(${p1HpPortion}% - 60px)`
         p1ProgressCat.style.zIndex = p1Smashes >= p2Smashes ? '12' : '11'
     }
     if (p2ProgressCat) {
@@ -994,19 +1028,19 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
     // เล่นเสียงกลองสังเคราะห์ตามผู้เล่น
     if (playerKey === 'p1') {
         playDrumSound(140) // กลองผู้เล่น 1 (โทนสูงขึ้นเล็กน้อย)
-        const bongoP1 = document.querySelector('#p1-ice-block .bongo-drums-img');
+        const bongoP1 = document.querySelector('#p1-ice-block .bongo-drums-img')
         if (bongoP1) {
-            bongoP1.classList.remove('bongo-hit-anim');
-            void bongoP1.offsetWidth; // Trigger reflow
-            bongoP1.classList.add('bongo-hit-anim');
+            bongoP1.classList.remove('bongo-hit-anim')
+            void bongoP1.offsetWidth // Trigger reflow
+            bongoP1.classList.add('bongo-hit-anim')
         }
     } else {
         playDrumSound(110) // กลองผู้เล่น 2 (โทนทุ้มต่ำกว่า)
-        const bongoP2 = document.querySelector('#p2-ice-block .bongo-drums-img');
+        const bongoP2 = document.querySelector('#p2-ice-block .bongo-drums-img')
         if (bongoP2) {
-            bongoP2.classList.remove('bongo-hit-anim');
-            void bongoP2.offsetWidth; // Trigger reflow
-            bongoP2.classList.add('bongo-hit-anim');
+            bongoP2.classList.remove('bongo-hit-anim')
+            void bongoP2.offsetWidth // Trigger reflow
+            bongoP2.classList.add('bongo-hit-anim')
         }
     }
     if (playerKey === 'p1') {
@@ -1018,20 +1052,20 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
             window.clashMultiplier = 1
         }
         p1Smashes += hitPower
-        
+
         // They clash! P1 pushes P2 back!
         if (p1Smashes + p2Smashes > MAX_SMASHES) {
             const overflow = (p1Smashes + p2Smashes) - MAX_SMASHES
             p2Smashes -= overflow
         }
-        
+
         // Ensure bounds
         p1Smashes = Math.min(MAX_SMASHES, Math.max(0, p1Smashes))
         p2Smashes = Math.min(MAX_SMASHES, Math.max(0, p2Smashes))
-        
+
         p1Hp = Math.max(0, Math.round((1 - (p1Smashes / MAX_SMASHES)) * 100))
         p2Hp = Math.max(0, Math.round((1 - (p2Smashes / MAX_SMASHES)) * 100)) // P2 might have been pushed back
-        
+
         updateGameScreenUI()
         updateIceCracks('p1', p1Hp)
         updateIceCracks('p2', p2Hp)
@@ -1065,7 +1099,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
                 p1BongoImg.classList.remove('drum-hit')
             }, 200)
         }
-        
+
         // Animate P1 Progress Cat hitting the health bar!
         const p1ProgressCat = document.getElementById('p1-progress-cat')
         if (p1ProgressCat) {
@@ -1089,20 +1123,20 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
             window.clashMultiplier = 1
         }
         p2Smashes += hitPower
-        
+
         // They clash! P2 pushes P1 back!
         if (p1Smashes + p2Smashes > MAX_SMASHES) {
             const overflow = (p1Smashes + p2Smashes) - MAX_SMASHES
             p1Smashes -= overflow
         }
-        
+
         // Ensure bounds
         p2Smashes = Math.min(MAX_SMASHES, Math.max(0, p2Smashes))
         p1Smashes = Math.min(MAX_SMASHES, Math.max(0, p1Smashes))
-        
+
         p2Hp = Math.max(0, Math.round((1 - (p2Smashes / MAX_SMASHES)) * 100))
         p1Hp = Math.max(0, Math.round((1 - (p1Smashes / MAX_SMASHES)) * 100)) // P1 might have been pushed back
-        
+
         updateGameScreenUI()
         updateIceCracks('p2', p2Hp)
         updateIceCracks('p1', p1Hp)
@@ -1136,7 +1170,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
                 p2BongoImg.classList.remove('drum-hit')
             }, 200)
         }
-        
+
         // Animate P2 Progress Cat hitting the health bar!
         const p2ProgressCat = document.getElementById('p2-progress-cat')
         if (p2ProgressCat) {
@@ -1243,24 +1277,24 @@ function getPlayerScore(playerKey) {
 }
 
 function shouldTriggerBonusRound() {
-    if (window.bonusTriggerCount === undefined) window.bonusTriggerCount = 0;
-    
+    if (window.bonusTriggerCount === undefined) window.bonusTriggerCount = 0
+
     // บังคับให้ออกเป๊ะๆ 3 ครั้งในการเล่น 1 รอบ 
     // โดยออกเมื่อตอบคำถามปกติไปแล้ว 4 ข้อ, 9 ข้อ, และ 14 ข้อ
     if (window.bonusTriggerCount === 0 && totalQuestionsAnswered === 4) {
-        window.bonusTriggerCount++;
-        return true;
+        window.bonusTriggerCount++
+        return true
     }
     if (window.bonusTriggerCount === 1 && totalQuestionsAnswered === 9) {
-        window.bonusTriggerCount++;
-        return true;
+        window.bonusTriggerCount++
+        return true
     }
     if (window.bonusTriggerCount === 2 && totalQuestionsAnswered === 14) {
-        window.bonusTriggerCount++;
-        return true;
+        window.bonusTriggerCount++
+        return true
     }
-    
-    return false;
+
+    return false
 }
 
 function getNextQuestionForRound() {
@@ -1271,11 +1305,11 @@ function getNextQuestionForRound() {
         // ดึงข้อโบนัสจาก Pool ที่สุ่มไว้แล้ว โดยไม่ให้ซ้ำข้อเดิม
         if (bonusQuestionPool.length === 0) {
             // หากหมดให้สุ่มชุดโบนัสใหม่
-            buildQuestionPools(selectedCategory, true);
+            buildQuestionPools(selectedCategory, true)
         }
-        currentQuestion = bonusQuestionPool.shift();
-        window.lastBonusQuestionId = currentQuestion.questionId;
-        
+        currentQuestion = bonusQuestionPool.shift()
+        window.lastBonusQuestionId = currentQuestion.questionId
+
         currentLevel = 0
         bonusRevealsRemaining = BONUS_MAX_REVEALS
 
@@ -1328,14 +1362,14 @@ function buildJigsawBoardHTML() {
         return `
         <button class="jigsaw-square hover-target${revealedSquares.includes(index) ? ' revealed' : ''}" data-hover-key="JIGSAW_${index}" data-square="${index}" ${revealedSquares.includes(index) || bonusRevealsRemaining <= 0 ? 'disabled' : ''} ${mobileClick}></button>
     `}).join('')
-    
+
     let imageStyles = ''
-    
+
     // ใช้ขนาด 100% (พอดีรูปต้นฉบับ) และใช้ object-fit: contain
     // แต่สุ่ม object-position เพื่อเลื่อนตำแหน่งรูปไปซ้าย-ขวา-บน-ล่าง ไม่ให้อยู่ตรงกลางเป๊ะทุกรอบ
     const posX = Math.floor(Math.random() * 101) // 0% to 100%
     const posY = Math.floor(Math.random() * 101) // 0% to 100%
-    
+
     imageStyles = `width: 100%; height: 100%; position: absolute; top: 0; left: 0; object-fit: contain; object-position: ${posX}% ${posY}%;`
 
     return `
@@ -1417,7 +1451,7 @@ function startQuestionPhase() {
     const progressText = isBonusLevel
         ? `Bonus ${questionsAnsweredBonus + 1}/3`
         : `Question ${totalQuestionsAnswered + 1}/${getTotalNormalQuestions()}`
-        
+
     const progressBadgeHTML = `<div style="position: absolute; right: 10px; top: 10px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; z-index: 10; font-family: 'Fredoka', sans-serif;">${progressText}</div>`
 
     loserContainer.innerHTML = `
@@ -1610,15 +1644,21 @@ function updateOptionHover(x, y) {
         const progressFill = btn.querySelector('.progress-fill')
         if (typeof optionProgress[opt] !== 'number') optionProgress[opt] = 0
 
+        const isAnswerButton = btn.classList.contains('option-btn') && !opt.startsWith('JIGSAW_')
+        const skipAutoSelect = isMobile && isAnswerButton
+
         if (opt === hoveredOption) {
-            if (optionProgress[opt] === 0) {
-                // เล่นเสียงเอฟเฟกต์ทันทีเมื่อเริ่มชี้ (ตามที่ขอ "พอชี้ปุ๊บเสียงนี้ขึ้นมาเลย")
+            if (optionProgress[opt] === 0 && !skipAutoSelect) {
                 playSFX(sfxInterface)
             }
-            optionProgress[opt] = Math.min(100, optionProgress[opt] + 50 * dt)
+            if (!skipAutoSelect) {
+                optionProgress[opt] = Math.min(100, optionProgress[opt] + 50 * dt)
+            } else {
+                optionProgress[opt] = 0
+            }
             btn.classList.add('hovering')
 
-            if (optionProgress[opt] >= 100) {
+            if (!skipAutoSelect && optionProgress[opt] >= 100) {
                 activatedTargetKey = opt
             }
         } else {
@@ -1929,7 +1969,7 @@ function showFinalScreen() {
     }
 
     const finalWinner = getFinalWinnerKey()
-    
+
     const p1Anim = document.getElementById('p1-final-anim')
     const p2Anim = document.getElementById('p2-final-anim')
     const p1Badge = document.getElementById('p1-final-badge')
@@ -1946,18 +1986,18 @@ function showFinalScreen() {
     `
 
     if (finalWinner === 'p1') {
-        if (p1Anim) { p1Anim.className = 'anim-win'; p1Anim.innerHTML = winAnimHTML; }
-        if (p2Anim) { p2Anim.className = 'anim-cry'; p2Anim.innerHTML = cryAnimHTML; }
+        if (p1Anim) { p1Anim.className = 'anim-win'; p1Anim.innerHTML = winAnimHTML }
+        if (p2Anim) { p2Anim.className = 'anim-cry'; p2Anim.innerHTML = cryAnimHTML }
         if (p1Badge) p1Badge.src = 'end/winner-jukebox-bg-removed.png'
         if (p2Badge) p2Badge.src = 'end/Lose.png'
     } else if (finalWinner === 'p2') {
-        if (p1Anim) { p1Anim.className = 'anim-cry'; p1Anim.innerHTML = cryAnimHTML; }
-        if (p2Anim) { p2Anim.className = 'anim-win'; p2Anim.innerHTML = winAnimHTML; }
+        if (p1Anim) { p1Anim.className = 'anim-cry'; p1Anim.innerHTML = cryAnimHTML }
+        if (p2Anim) { p2Anim.className = 'anim-win'; p2Anim.innerHTML = winAnimHTML }
         if (p1Badge) p1Badge.src = 'end/Lose.png'
         if (p2Badge) p2Badge.src = 'end/winner-jukebox-bg-removed.png'
     } else {
-        if (p1Anim) { p1Anim.className = 'anim-win'; p1Anim.innerHTML = winAnimHTML; }
-        if (p2Anim) { p2Anim.className = 'anim-win'; p2Anim.innerHTML = winAnimHTML; }
+        if (p1Anim) { p1Anim.className = 'anim-win'; p1Anim.innerHTML = winAnimHTML }
+        if (p2Anim) { p2Anim.className = 'anim-win'; p2Anim.innerHTML = winAnimHTML }
         if (p1Badge) p1Badge.src = 'end/winner-jukebox-bg-removed.png'
         if (p2Badge) p2Badge.src = 'end/winner-jukebox-bg-removed.png'
     }
@@ -2103,11 +2143,11 @@ async function updateCameraSelector(activeDeviceId = null) {
 // ระบบวิเคราะห์โครงสร้างมือ (MediaPipe Hands)
 // ==========================================
 function initHandsModel() {
-    return; // ปิดระบบตรวจจับมือในโทรศัพท์/ไอแพด
+    return // ปิดระบบตรวจจับมือในโทรศัพท์/ไอแพด
 }
 
 function startHandTracking() {
-    return; // ปิดระบบตรวจจับมือในโทรศัพท์/ไอแพด
+    return // ปิดระบบตรวจจับมือในโทรศัพท์/ไอแพด
 }
 
 function stopHandTracking() {
@@ -2225,7 +2265,7 @@ function onHandResults(results) {
             }
 
             if (winnerHand) {
-                window.pointerMissingFrames = 0; // รีเซ็ตตัวนับเมื่อเจอมือ
+                window.pointerMissingFrames = 0 // รีเซ็ตตัวนับเมื่อเจอมือ
                 pointerEl.classList.remove('hidden')
                 const indexFinger = winnerHand[8] // ปลายนิ้วชี้
 
@@ -2263,7 +2303,7 @@ function onHandResults(results) {
 
                 updateOptionHover(targetX, targetY)
             } else {
-                window.pointerMissingFrames = (window.pointerMissingFrames || 0) + 1;
+                window.pointerMissingFrames = (window.pointerMissingFrames || 0) + 1
                 if (window.pointerMissingFrames > 10) { // ลดเวลาการค้างหน้าจอลงเหลือ 10 เฟรม
                     pointerEl.classList.add('hidden')
                     pointerHistory.x = []
@@ -2275,7 +2315,7 @@ function onHandResults(results) {
             }
         } // ปิด if question-screen
     } else {
-        window.pointerMissingFrames = (window.pointerMissingFrames || 0) + 1;
+        window.pointerMissingFrames = (window.pointerMissingFrames || 0) + 1
         if (window.pointerMissingFrames > 10) {
             p1Pointer.classList.add('hidden')
             p2Pointer.classList.add('hidden')
@@ -2596,7 +2636,7 @@ const btnSettingsPrev = document.getElementById('btn-settings-prev')
 if (btnStartSettings) {
     btnStartSettings.addEventListener('click', () => {
         // Reset to page 1 when opening settings
-        if(settingsPage1 && settingsPage2) {
+        if (settingsPage1 && settingsPage2) {
             settingsPage1.style.display = 'flex'
             settingsPage2.style.display = 'none'
         }
@@ -2615,7 +2655,7 @@ if (btnBackFromSettings2) btnBackFromSettings2.addEventListener('click', backToH
 if (btnSettingsNext) {
     btnSettingsNext.addEventListener('click', () => {
         playBeep(880, 0.25)
-        if(settingsPage1 && settingsPage2) {
+        if (settingsPage1 && settingsPage2) {
             settingsPage1.style.display = 'none'
             settingsPage2.style.display = 'flex'
         }
@@ -2625,7 +2665,7 @@ if (btnSettingsNext) {
 if (btnSettingsPrev) {
     btnSettingsPrev.addEventListener('click', () => {
         playBeep(880, 0.25)
-        if(settingsPage1 && settingsPage2) {
+        if (settingsPage1 && settingsPage2) {
             settingsPage2.style.display = 'none'
             settingsPage1.style.display = 'flex'
         }
@@ -2665,41 +2705,41 @@ function preloadAllGameImages() {
         'end/cry3.png',
         'end/winner-jukebox-bg-removed.png',
         'end/Lose.png'
-    ];
-    
+    ]
+
     const bloodAssets = [
-        'blood/cat1.png', 
+        'blood/cat1.png',
         'blood/cat2.png'
-    ];
-    
+    ]
+
     const levelAssets = [
         'level/level1.png',
         'level/level2.png',
         'level/level3.png'
-    ];
-    
-    const questionAssets = [];
+    ]
+
+    const questionAssets = []
     for (const cat in categoryQuestions) {
         for (const level in categoryQuestions[cat]) {
             categoryQuestions[cat][level].forEach(q => {
-                if (q.image) questionAssets.push(q.image);
-            });
+                if (q.image) questionAssets.push(q.image)
+            })
         }
     }
-    
-    const allAssets = [...finalAssets, ...bloodAssets, ...levelAssets, ...questionAssets];
-    
+
+    const allAssets = [...finalAssets, ...bloodAssets, ...levelAssets, ...questionAssets]
+
     // Create an invisible div to hold the images so the browser definitely caches them
-    const preloadContainer = document.createElement('div');
-    preloadContainer.style.display = 'none';
-    preloadContainer.id = 'preload-container';
-    document.body.appendChild(preloadContainer);
-    
+    const preloadContainer = document.createElement('div')
+    preloadContainer.style.display = 'none'
+    preloadContainer.id = 'preload-container'
+    document.body.appendChild(preloadContainer)
+
     allAssets.forEach(src => {
-        const img = document.createElement('img');
-        img.src = src;
-        preloadContainer.appendChild(img);
-    });
+        const img = document.createElement('img')
+        img.src = src
+        preloadContainer.appendChild(img)
+    })
 }
 // Trigger preload immediately when game loads
-preloadAllGameImages();
+preloadAllGameImages()
