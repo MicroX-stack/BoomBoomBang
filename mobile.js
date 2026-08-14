@@ -82,14 +82,15 @@ function initAudioContext() {
     });
 }
 
-// โหลดตอนเข้าเว็บ และปลดล็อกเมื่อคลิก
-window.addEventListener('load', initAudioContext);
-document.addEventListener('click', () => {
+// ปลดล็อก AudioContext เฉพาะตอนผู้ใช้คลิกหรือแตะหน้าจอครั้งแรก (ห้าม load ทันทีใน iOS)
+const unlockAudio = () => {
     if (!audioCtx) initAudioContext();
     if (audioCtx && audioCtx.state === 'suspended') {
         audioCtx.resume();
     }
-}, { once: true });
+};
+document.addEventListener('click', unlockAudio, { once: true });
+document.addEventListener('touchstart', unlockAudio, { once: true });
 
 function playSFX(audioName) {
     if (audioCtx && audioCtx.state === 'suspended') {
