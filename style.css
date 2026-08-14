@@ -29,6 +29,8 @@ body {
     overflow: hidden;
     height: 100%;
     width: 100%;
+    touch-action: none; /* ป้องกันการเลื่อนหน้าจอ (Scrolling) บนมือถือและไอแพด */
+    position: fixed; /* ป้องกันยางยืด (Bounce effect) บน iOS */
 }
 
 body {
@@ -3258,6 +3260,25 @@ input:checked+.toggle-slider:before {
     
     /* On 16:10, margin was 0 -2.5vw. Convert to vh: -2.5 * 1.6 = -4vh */
     .category-img-btn { margin: 0 -4vh !important; }
+}
+
+/* 
+   ==========================================
+   Ultra-wide Mobile Compatibility (Phones in Landscape)
+   ========================================== 
+   Since phones are much wider (e.g. 19.5:9), vh is very small.
+   Increase the vh multipliers so it doesn't look tiny!
+*/
+@media (max-height: 500px) and (orientation: landscape) {
+    .home-logo { width: 140vh !important; }
+    .home-cat { width: 95vh !important; }
+    .home-buttons-wrapper { width: 80vh !important; }
+    
+    .category-title-img { width: 90vh !important; top: 5% !important; }
+    .category-buttons-row { width: 170vh !important; bottom: 20% !important; }
+    .btn-category-back { width: 22vh !important; bottom: 5% !important; }
+    
+    .category-img-btn { margin: 0 -6vh !important; }
 }
 /* Bongo Hit Animation */
 @keyframes bongo-hit {
