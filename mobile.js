@@ -846,6 +846,7 @@ function _internalStartGameScreen() {
     p2Hp = 100
     p1Smashes = 0
     p2Smashes = 0
+    window.clashMultiplier = 1
     isGameOver = false
     winner = null
 
@@ -989,7 +990,10 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
     if (playerKey === 'p1') {
         let hitPower = 1
         if (p1Smashes + p2Smashes >= MAX_SMASHES) {
-            hitPower = 3 // เพิ่มความแรง 3 เท่าเมื่อชนกัน เพื่อไม่ให้ยื้อเกมนานเกินไป
+            window.clashMultiplier = (window.clashMultiplier || 1) + 0.3 // เพิ่มความแรงสะสมเมื่อยื้อกันนาน
+            hitPower = Math.floor(window.clashMultiplier)
+        } else {
+            window.clashMultiplier = 1
         }
         p1Smashes += hitPower
         
@@ -1057,7 +1061,10 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
     } else {
         let hitPower = 1
         if (p1Smashes + p2Smashes >= MAX_SMASHES) {
-            hitPower = 3 // เพิ่มความแรง 3 เท่าเมื่อชนกัน เพื่อไม่ให้ยื้อเกมนานเกินไป
+            window.clashMultiplier = (window.clashMultiplier || 1) + 0.3 // เพิ่มความแรงสะสมเมื่อยื้อกันนาน
+            hitPower = Math.floor(window.clashMultiplier)
+        } else {
+            window.clashMultiplier = 1
         }
         p2Smashes += hitPower
         
