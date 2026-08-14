@@ -2086,7 +2086,7 @@ function initHandsModel() {
 
         handsModel.setOptions({
             maxNumHands: 4,
-            modelComplexity: 1,
+            modelComplexity: 0,
             minDetectionConfidence: 0.25,
             minTrackingConfidence: 0.25
         })
