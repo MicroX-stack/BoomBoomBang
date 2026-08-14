@@ -2126,10 +2126,20 @@ function adjustCanvasSize() {
     }
 }
 
+let lastFrameTime = 0
 async function processVideoFrame() {
     if (!mediaStream || video.paused || video.ended || !isHandTrackingActive || !handsModel) {
         return
     }
+    
+    // Limit to ~20 FPS (50ms) to prevent thermal throttling and freezing on Macbook
+    const now = Date.now()
+    if (now - lastFrameTime < 50) {
+        requestAnimationFrame(processVideoFrame)
+        return
+    }
+    lastFrameTime = now
+
     try {
         await handsModel.send({ image: video })
     } catch (err) {
