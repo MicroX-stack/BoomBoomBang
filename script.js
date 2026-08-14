@@ -1055,6 +1055,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
         
         // They clash! P2 pushes P1 back!
         if (p1Smashes + p2Smashes > MAX_SMASHES) {
+            const overflow = (p1Smashes + p2Smashes) - MAX_SMASHES
             p1Smashes -= overflow
         }
         
@@ -1076,8 +1077,7 @@ function triggerSmash(playerKey, x, y, wristLandmark) {
 
         if (catContainer) {
             catContainer.classList.remove('drumming-left', 'drumming-right')
-            void catContainer.offsetWidth
-            catContainer.classList.add(catSide)
+            requestAnimationFrame(() => requestAnimationFrame(() => catContainer.classList.add(catSide)))
             setTimeout(() => catContainer.classList.remove('drumming-left', 'drumming-right'), 120)
         }
 
