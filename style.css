@@ -3137,8 +3137,9 @@ input:checked+.toggle-slider:before {}
 }
 
 .home-btn-img-wrapper:nth-child(2) {
-    margin-top: 0;
+    margin-top: -12px;
     width: 88%;
+    transform: rotate(-4deg);
 }
 
 .home-btn-img-wrapper {
