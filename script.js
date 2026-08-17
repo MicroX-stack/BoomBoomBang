@@ -1687,11 +1687,6 @@ function getFinalWinnerKey() {
 }
 
 function proceedAfterQuestion(outcomeText, roundLabel) {
-    if (isNormalGameFinished()) {
-        showFinalScreen()
-        return
-    }
-
     showScoreScreen(outcomeText, roundLabel)
 }
 
@@ -1838,24 +1833,37 @@ function showScoreScreen(outcomeText, roundLabel = 'Last Round') {
     const detailEl = document.getElementById('round-result-detail')
     if (detailEl) detailEl.textContent = outcomeText
 
+    const isFinal = isNormalGameFinished()
     let countdownVal = 3
     const timerEl = document.getElementById('score-timer-count')
-    if (timerEl) timerEl.textContent = countdownVal
+    const timerParent = timerEl ? timerEl.parentElement : null
+    const btnNext = document.getElementById('btn-score-next')
+
+    if (isFinal) {
+        if (timerParent) timerParent.style.display = 'none'
+        if (btnNext) btnNext.innerText = 'Finish'
+    } else {
+        if (timerParent) timerParent.style.display = 'block'
+        if (timerEl) timerEl.textContent = countdownVal
+        if (btnNext) btnNext.innerText = 'Next Round'
+    }
 
     if (scoreCountdownInterval) {
         clearInterval(scoreCountdownInterval)
     }
 
-    scoreCountdownInterval = setInterval(() => {
-        countdownVal--
-        if (timerEl) timerEl.textContent = countdownVal
+    if (!isFinal) {
+        scoreCountdownInterval = setInterval(() => {
+            countdownVal--
+            if (timerEl) timerEl.textContent = countdownVal
 
-        if (countdownVal <= 0) {
-            clearInterval(scoreCountdownInterval)
-            scoreCountdownInterval = null
-            startNextRound()
-        }
-    }, 1000)
+            if (countdownVal <= 0) {
+                clearInterval(scoreCountdownInterval)
+                scoreCountdownInterval = null
+                startNextRound()
+            }
+        }, 1000)
+    }
 }
 
 function startNextRound() {
@@ -1863,6 +1871,12 @@ function startNextRound() {
         clearInterval(scoreCountdownInterval)
         scoreCountdownInterval = null
     }
+
+    if (isNormalGameFinished()) {
+        showFinalScreen()
+        return
+    }
+
     currentRound++
     startGameScreen()
 }

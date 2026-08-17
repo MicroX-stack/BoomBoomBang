@@ -3570,13 +3570,20 @@ body.allow-scroll {
     height: auto !important;
     min-height: 100% !important;
     justify-content: flex-start !important;
-    padding-top: 5vh !important;
-    padding-bottom: 10vh !important;
+    padding: 0 !important;
 }
 
 .winner-active-box {
     height: auto !important;
+    min-height: 100% !important;
     overflow: visible !important;
+    padding-top: 5vh !important;
+    padding-bottom: 10vh !important;
+}
+
+.wait-container {
+    padding-top: 5vh !important;
+    padding-bottom: 10vh !important;
 }
 
 #question-divider {
