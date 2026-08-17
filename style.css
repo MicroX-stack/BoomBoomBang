@@ -3139,6 +3139,7 @@ input:checked+.toggle-slider:before {}
 .home-btn-img-wrapper:nth-child(2) {
     margin-top: -10px;
     width: 88%;
+    transform: translateX(-2%);
 }
 
 .home-btn-img-wrapper {
