@@ -88,6 +88,30 @@ const unlockAudio = () => {
     if (audioCtx && audioCtx.state === 'suspended') {
         audioCtx.resume()
     }
+    
+    // ปลดล็อกระบบเสียงเพลง (BGM) สำหรับ iOS Safari
+    [bgmMenu, bgmGame, bgmFinal].forEach(bgm => {
+        if (bgm !== currentBGM) {
+            bgm.muted = true;
+            const p = bgm.play();
+            if (p !== undefined) {
+                p.then(() => {
+                    bgm.pause();
+                    bgm.muted = false;
+                }).catch(() => {
+                    bgm.muted = false;
+                });
+            } else {
+                bgm.pause();
+                bgm.muted = false;
+            }
+        }
+    });
+    
+    // เล่นเพลงปัจจุบันที่อาจจะถูกบล็อคไว้ก่อนหน้านี้
+    if (currentBGM) {
+        currentBGM.play().catch(()=>{});
+    }
 }
 document.addEventListener('click', unlockAudio, { once: true })
 document.addEventListener('touchstart', unlockAudio, { once: true })
