@@ -3562,7 +3562,7 @@ body.allow-scroll {
 #question-screen {
     overflow-y: scroll !important;
     -webkit-overflow-scrolling: touch !important;
-    align-items: flex-start !important;
+    align-items: stretch !important;
     display: flex !important;
 }
 

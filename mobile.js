@@ -1455,7 +1455,7 @@ function startQuestionPhase() {
     const progressBadgeHTML = `<div style="position: absolute; right: 10px; top: 10px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; z-index: 10; font-family: 'Fredoka', sans-serif;">${progressText}</div>`
 
     loserContainer.innerHTML = `
-        <div class="wait-container" style="position: relative;">
+        <div class="wait-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;">
             ${progressBadgeHTML}
             <span class="wait-emoji">🥁</span>
             <p class="wait-text">รออีกฝั่งตอบคำถาม</p>
