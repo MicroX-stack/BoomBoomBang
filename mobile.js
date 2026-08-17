@@ -865,10 +865,14 @@ function showLevelTransition(level, callback) {
 }
 
 function startGameScreen() {
+    const isNextBonus = (window.bonusTriggerCount === 0 && totalQuestionsAnswered === 5) || 
+                        (window.bonusTriggerCount === 1 && totalQuestionsAnswered === 10) ||
+                        (window.bonusTriggerCount === 2 && totalQuestionsAnswered === 15);
+
     const nextQuestion = gameQuestionPool ? gameQuestionPool[gameQuestionIndex] : null
     const nextLevel = nextQuestion ? (nextQuestion.level || 1) : 1
 
-    if (nextLevel !== lastPlayedLevel && nextLevel >= 1 && nextLevel <= 3) {
+    if (!isNextBonus && nextLevel !== lastPlayedLevel && nextLevel >= 1 && nextLevel <= 3) {
         lastPlayedLevel = nextLevel
 
         // 1. ไปที่หน้าเกมเลย
@@ -1280,16 +1284,16 @@ function shouldTriggerBonusRound() {
     if (window.bonusTriggerCount === undefined) window.bonusTriggerCount = 0
 
     // บังคับให้ออกเป๊ะๆ 3 ครั้งในการเล่น 1 รอบ 
-    // โดยออกเมื่อตอบคำถามปกติไปแล้ว 4 ข้อ, 9 ข้อ, และ 14 ข้อ
-    if (window.bonusTriggerCount === 0 && totalQuestionsAnswered === 4) {
+    // โดยออกเมื่อตอบคำถามปกติไปแล้ว 5 ข้อ, 10 ข้อ, และ 15 ข้อ
+    if (window.bonusTriggerCount === 0 && totalQuestionsAnswered === 5) {
         window.bonusTriggerCount++
         return true
     }
-    if (window.bonusTriggerCount === 1 && totalQuestionsAnswered === 9) {
+    if (window.bonusTriggerCount === 1 && totalQuestionsAnswered === 10) {
         window.bonusTriggerCount++
         return true
     }
-    if (window.bonusTriggerCount === 2 && totalQuestionsAnswered === 14) {
+    if (window.bonusTriggerCount === 2 && totalQuestionsAnswered === 15) {
         window.bonusTriggerCount++
         return true
     }
